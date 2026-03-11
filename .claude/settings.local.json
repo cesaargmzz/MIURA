@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(echo \"y\" | npx --yes create-vite@latest . --template react-ts 2>&1)",
+      "Bash(printf 'y\\\\n' | npm create vite@latest . -- --template react-ts 2>&1 || true)",
+      "Bash(npx --yes create-vite@latest miura-temp --template react-ts 2>&1)",
+      "Bash(cp /c/Users/cmgce/MIURA/miura-temp/index.html /c/Users/cmgce/MIURA/ && cp /c/Users/cmgce/MIURA/miura-temp/package.json /c/Users/cmgce/MIURA/ && cp /c/Users/cmgce/MIURA/miura-temp/tsconfig.json /c/Users/cmgce/MIURA/ && cp /c/Users/cmgce/MIURA/miura-temp/tsconfig.app.json /c/Users/cmgce/MIURA/ && cp /c/Users/cmgce/MIURA/miura-temp/tsconfig.node.json /c/Users/cmgce/MIURA/ && cp /c/Users/cmgce/MIURA/miura-temp/vite.config.ts /c/Users/cmgce/MIURA/ && cp /c/Users/cmgce/MIURA/miura-temp/eslint.config.js /c/Users/cmgce/MIURA/ && cp -r /c/Users/cmgce/MIURA/miura-temp/src /c/Users/cmgce/MIURA/ && cp -r /c/Users/cmgce/MIURA/miura-temp/public /c/Users/cmgce/MIURA/ && rm -rf /c/Users/cmgce/MIURA/miura-temp && echo \"Done\")",
+      "Bash(npm install:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(./node_modules/.bin/tailwindcss init:*)",
+      "Bash(/c/Users/cmgce/MIURA/node_modules/.bin/tailwindcss init:*)",
+      "Bash(npm run:*)"
+    ]
+  }
+}
