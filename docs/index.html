@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DeltaV Academy — Aprende Física Aeroespacial</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────── */
+:root{
+  --bg:#05070f;
+  --s1:#0d1117;
+  --s2:#161b22;
+  --s3:#21262d;
+  --border:#30363d;
+  --orange:#f97316;
+  --blue:#3b82f6;
+  --green:#10b981;
+  --purple:#a78bfa;
+  --red:#f43f5e;
+  --text:#e6edf3;
+  --t2:#8b949e;
+  --t3:#6e7681;
+  --sw:268px;
+  --font-head:'Syne',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --font-body:'Inter',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.7;overflow-x:hidden}
+
+/* ─── STARS ─────────────────────────────────── */
+#c-stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* ─── SIDEBAR ────────────────────────────────── */
+#sidebar{
+  position:fixed;top:0;left:0;width:var(--sw);height:100vh;
+  background:rgba(13,17,23,.97);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:200;
+  backdrop-filter:blur(16px);overflow:hidden;
+}
+.sb-top{padding:20px 16px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-logo{font-family:var(--font-head);font-size:18px;font-weight:800;
+  background:linear-gradient(135deg,var(--orange),var(--blue));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:-.01em;margin-bottom:2px}
+.sb-sub{font-size:11px;color:var(--t3);letter-spacing:.06em;text-transform:uppercase}
+
+/* progress bar */
+.sb-prog{padding:12px 16px 0;flex-shrink:0}
+.sb-prog-label{display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin-bottom:5px}
+.prog-track{height:4px;background:var(--s3);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;width:0;background:linear-gradient(90deg,var(--orange),var(--blue));
+  border-radius:2px;transition:width .4s ease}
+
+/* nav */
+#sb-nav{flex:1;overflow-y:auto;padding:10px 8px 20px;
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+#sb-nav::-webkit-scrollbar{width:3px}
+#sb-nav::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+.block-label{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--t3);padding:10px 8px 5px;margin-top:4px}
+.block-label:first-child{margin-top:0}
+
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 9px;
+  border-radius:6px;cursor:pointer;font-size:12.5px;color:var(--t2);
+  text-decoration:none;transition:all .15s;margin-bottom:1px;user-select:none}
+.nav-item:hover:not(.nav-locked){background:var(--s3);color:var(--text)}
+.nav-item.nav-active{background:rgba(249,115,22,.12);color:var(--orange)}
+.nav-item.nav-done{color:var(--t2)}
+.nav-item.nav-locked{opacity:.4;cursor:default}
+.nav-item.nav-locked .nv-icon{filter:grayscale(1)}
+.nv-num{font-family:var(--font-mono);font-size:10px;color:var(--t3);min-width:20px;flex-shrink:0}
+.nav-item.nav-active .nv-num{color:var(--orange)}
+.nv-icon{margin-left:auto;font-size:12px;flex-shrink:0}
+
+/* ─── MAIN ───────────────────────────────────── */
+#main{margin-left:var(--sw);position:relative;z-index:1;min-height:100vh}
+
+/* ─── HERO ───────────────────────────────────── */
+#hero{min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:80px 40px;position:relative}
+.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--orange);
+  background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);
+  padding:4px 14px;border-radius:20px;margin-bottom:28px;display:inline-block}
+#hero h1{font-family:var(--font-head);font-size:clamp(2.6rem,5vw,4.2rem);
+  font-weight:800;line-height:1.05;letter-spacing:-.02em;
+  background:linear-gradient(135deg,#fff 0%,var(--orange) 45%,var(--blue) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:20px}
+#hero .hero-lead{max-width:580px;color:var(--t2);font-size:1.05rem;margin-bottom:36px}
+.hero-stats{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:44px}
+.hstat{background:var(--s2);border:1px solid var(--border);
+  border-radius:10px;padding:14px 20px;text-align:center;min-width:105px}
+.hstat-v{font-family:var(--font-head);font-size:1.5rem;font-weight:700;color:var(--orange)}
+.hstat-l{font-size:11px;color:var(--t3);margin-top:2px}
+.btn-cta{display:inline-block;background:linear-gradient(135deg,var(--orange),#ea580c);
+  color:#fff;font-weight:600;font-size:.95rem;padding:13px 30px;
+  border-radius:8px;text-decoration:none;border:none;cursor:pointer;
+  box-shadow:0 4px 20px rgba(249,115,22,.35);transition:transform .15s,opacity .15s}
+.btn-cta:hover{transform:translateY(-2px);opacity:.9}
+
+/* ─── BLOCK SEPARATOR ───────────────────────── */
+.block-sep{max-width:840px;margin:0 auto;padding:60px 40px 0}
+.block-sep-inner{border-top:1px solid var(--border);padding-top:48px}
+.block-title{font-family:var(--font-head);font-size:clamp(1.2rem,2.5vw,1.6rem);
+  font-weight:700;color:var(--text);margin-bottom:6px}
+.block-desc{color:var(--t2);font-size:.9rem}
+.block-badge{display:inline-block;font-size:10px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;
+  border-radius:12px;margin-bottom:12px}
+.bb-1{background:rgba(249,115,22,.12);color:var(--orange);border:1px solid rgba(249,115,22,.25)}
+.bb-2{background:rgba(59,130,246,.12);color:var(--blue);border:1px solid rgba(59,130,246,.25)}
+.bb-3{background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.25)}
+.bb-4{background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.25)}
+
+/* ─── MODULE ─────────────────────────────────── */
+.module{max-width:840px;margin:0 auto;padding:64px 40px;
+  border-bottom:1px solid rgba(48,54,61,.5);position:relative}
+.module:last-child{border-bottom:none}
+
+/* locked state */
+.mod-lock-overlay{
+  position:absolute;inset:0;z-index:10;
+  background:rgba(5,7,15,.88);backdrop-filter:blur(3px);
+  border-radius:4px;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;gap:10px;padding:20px}
+.mod-lock-overlay.hidden{display:none}
+.lock-icon-big{font-size:2rem;margin-bottom:4px}
+.lock-title{font-family:var(--font-head);font-size:1rem;font-weight:700;color:var(--t2)}
+.lock-hint{font-size:.8rem;color:var(--t3)}
+
+.mod-tag{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  font-family:var(--font-mono);color:var(--blue);margin-bottom:8px}
+.module h2{font-family:var(--font-head);font-size:clamp(1.5rem,3vw,2.1rem);
+  font-weight:700;line-height:1.15;margin-bottom:16px}
+.module p{color:var(--t2);margin-bottom:12px}
+.module h3{font-size:1rem;font-weight:600;color:var(--text);margin:24px 0 8px}
+
+/* deep dive */
+details.deep{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:8px;margin:24px 0;overflow:hidden}
+details.deep summary{
+  padding:14px 18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  font-weight:600;font-size:.9rem;color:var(--t2);
+  list-style:none;user-select:none;transition:color .15s}
+details.deep summary::-webkit-details-marker{display:none}
+details.deep summary::after{content:'＋';font-size:1rem;color:var(--orange);transition:transform .2s}
+details.deep[open] summary::after{content:'－'}
+details.deep summary:hover{color:var(--text)}
+.deep-body{padding:0 18px 18px;border-top:1px solid var(--border)}
+.deep-body h4{font-size:.85rem;font-weight:600;color:var(--text);margin:14px 0 6px;
+  text-transform:uppercase;letter-spacing:.06em}
+
+/* equation box */
+.eq{background:var(--s2);border:1px solid var(--border);
+  border-left:3px solid var(--orange);border-radius:0 6px 6px 0;
+  padding:14px 18px;margin:16px 0;overflow-x:auto}
+.eq-label{font-size:10px;color:var(--t3);text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:5px}
+.eq-main{font-family:var(--font-mono);font-size:1.05rem;color:#fff}
+.eq-sub{font-size:.75rem;color:var(--t2);margin-top:5px;font-family:var(--font-body)}
+sup{font-size:.65em;vertical-align:super}
+sub{font-size:.65em;vertical-align:sub}
+
+/* info grid */
+.igrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:10px;margin:16px 0}
+.icard{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.icard-l{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:5px}
+.icard-v{font-family:var(--font-head);font-size:1.15rem;font-weight:700;color:var(--blue)}
+.icard-d{font-size:.75rem;color:var(--t3);margin-top:3px}
+
+/* highlight box */
+.hl{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.2);
+  border-radius:6px;padding:12px 16px;margin:14px 0;
+  font-size:.85rem;color:var(--t2);line-height:1.6}
+.hl strong{color:var(--orange)}
+.hl.blue{background:rgba(59,130,246,.07);border-color:rgba(59,130,246,.2)}
+.hl.blue strong{color:var(--blue)}
+.hl.green{background:rgba(16,185,129,.07);border-color:rgba(16,185,129,.2)}
+.hl.green strong{color:var(--green)}
+
+/* table */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.82rem}
+th{padding:7px 10px;background:var(--s3);color:var(--t2);font-weight:600;
+  font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;
+  border-bottom:1px solid var(--border);text-align:left}
+td{padding:8px 10px;border-bottom:1px solid rgba(48,54,61,.4);color:var(--t2)}
+td:first-child{color:var(--text);font-weight:500}
+tr:hover td{background:rgba(22,27,34,.5)}
+
+/* ─── DEMO BOX ───────────────────────────────── */
+.demo{background:var(--s2);border:1px solid var(--border);border-radius:12px;
+  margin-top:28px;overflow:hidden}
+.demo-head{background:var(--s3);padding:10px 16px;
+  display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);
+  font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--t2)}
+.demo-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);flex-shrink:0}
+.demo-body{padding:18px}
+
+/* sliders */
+.srow{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.srow label{font-family:var(--font-mono);font-size:.75rem;color:var(--t2);min-width:180px}
+.srow input[type=range]{flex:1;min-width:120px;height:4px;
+  -webkit-appearance:none;background:var(--s3);border-radius:2px;outline:none;cursor:pointer}
+.srow input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:14px;height:14px;border-radius:50%;
+  background:var(--orange);cursor:pointer;box-shadow:0 0 6px rgba(249,115,22,.5)}
+.sval{font-family:var(--font-mono);font-size:.75rem;color:var(--orange);
+  min-width:100px;text-align:right;flex-shrink:0}
+
+/* result row */
+.rrow{background:var(--s3);border-radius:8px;padding:12px 16px;
+  display:flex;gap:20px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.rrow-item .rl{font-size:.72rem;color:var(--t3);margin-bottom:2px}
+.rrow-item .rv{font-family:var(--font-head);font-size:1.4rem;font-weight:700;color:var(--orange)}
+.rrow-item .ru{font-size:.75rem;color:var(--t2)}
+
+/* canvas */
+.dcanvas{width:100%;display:block;border-radius:6px;margin-top:12px}
+
+/* dv bar */
+.dvbar-wrap{margin-top:12px}
+.dvbar-sub{font-size:.72rem;color:var(--t3);margin-bottom:5px}
+.dvbar-track{height:26px;background:var(--s3);border-radius:5px;overflow:hidden;position:relative}
+.dvbar-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--blue));
+  border-radius:5px;transition:width .4s ease;
+  display:flex;align-items:center;padding:0 8px;
+  font-family:var(--font-mono);font-size:.72rem;color:#fff;white-space:nowrap;overflow:hidden}
+.dvbar-labels{display:flex;justify-content:space-between;
+  font-size:.7rem;color:var(--t3);margin-top:3px}
+
+/* atm display */
+.atmgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.atmcard{background:var(--s3);border-radius:7px;padding:10px;text-align:center}
+.atmcard .al{font-size:.7rem;color:var(--t3);margin-bottom:3px}
+.atmcard .av{font-family:var(--font-head);font-size:1rem;font-weight:700}
+.atmcard .as{font-size:.7rem;color:var(--t3);margin-top:2px}
+
+/* ─── QUIZ ───────────────────────────────────── */
+.quiz-section{margin-top:40px;border-top:1px solid var(--border);padding-top:28px}
+.quiz-header{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.quiz-header h3{font-family:var(--font-head);font-size:1rem;font-weight:700;color:var(--text);margin:0}
+.quiz-badge{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;
+  background:rgba(249,115,22,.12);color:var(--orange);border:1px solid rgba(249,115,22,.25);
+  padding:2px 8px;border-radius:10px}
+.quiz-progress{font-size:.75rem;color:var(--t3);font-family:var(--font-mono);margin-left:auto}
+
+.q-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;
+  padding:18px;margin-bottom:12px;transition:border-color .2s}
+.q-card.q-correct{border-color:var(--green);background:rgba(16,185,129,.05)}
+.q-card.q-wrong{border-color:var(--red);background:rgba(244,63,94,.05)}
+.q-text{font-size:.9rem;color:var(--text);margin-bottom:12px;font-weight:500}
+.q-opts{display:flex;flex-direction:column;gap:6px}
+.q-opt{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;
+  border-radius:6px;border:1px solid var(--border);cursor:pointer;
+  font-size:.85rem;color:var(--t2);background:var(--s3);
+  transition:all .15s;text-align:left;width:100%}
+.q-opt:hover:not(:disabled){border-color:var(--blue);color:var(--text);background:rgba(59,130,246,.05)}
+.q-opt.opt-correct{border-color:var(--green);color:var(--green);background:rgba(16,185,129,.08)}
+.q-opt.opt-wrong{border-color:var(--red);color:var(--red);background:rgba(244,63,94,.08)}
+.q-opt:disabled{cursor:default}
+.q-hint{font-size:.8rem;color:var(--orange);background:rgba(249,115,22,.08);
+  border:1px solid rgba(249,115,22,.2);border-radius:6px;
+  padding:8px 12px;margin-top:8px;display:none}
+.q-hint.show{display:block}
+
+.quiz-complete{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);
+  border-radius:10px;padding:22px;text-align:center;display:none}
+.quiz-complete.show{display:block}
+.qc-icon{font-size:2rem;margin-bottom:8px}
+.qc-title{font-family:var(--font-head);font-size:1.1rem;font-weight:700;
+  color:var(--green);margin-bottom:6px}
+.qc-msg{font-size:.85rem;color:var(--t2)}
+.btn-next{display:inline-block;margin-top:14px;background:var(--green);color:#000;
+  font-weight:700;font-size:.85rem;padding:10px 22px;border-radius:7px;
+  border:none;cursor:pointer;transition:opacity .15s}
+.btn-next:hover{opacity:.85}
+
+/* ─── MOBILE ─────────────────────────────────── */
+@media(max-width:768px){
+  :root{--sw:0px}
+  #sidebar{transform:translateX(-268px);width:268px;transition:transform .25s ease}
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0}
+  #mobile-overlay{display:block}
+  #btn-menu{display:flex}
+  .module{padding:48px 18px}
+  .block-sep{padding:48px 18px 0}
+  .atmgrid{grid-template-columns:1fr}
+  .igrid{grid-template-columns:1fr 1fr}
+  #hero{padding:60px 18px}
+  .srow label{min-width:100%}
+}
+#mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199}
+#mobile-overlay.show{display:block}
+#btn-menu{display:none;position:fixed;bottom:20px;right:20px;
+  width:46px;height:46px;border-radius:50%;background:var(--orange);
+  border:none;cursor:pointer;align-items:center;justify-content:center;
+  z-index:201;box-shadow:0 4px 16px rgba(249,115,22,.4);font-size:1.1rem;color:#fff}
+</style>
+</head>
+<body>
+
+<!-- STARS -->
+<canvas id="c-stars"></canvas>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sb-top">
+    <div class="sb-logo">DeltaV Academy</div>
+    <div class="sb-sub">Física Aeroespacial</div>
+  </div>
+  <div class="sb-prog">
+    <div class="sb-prog-label">
+      <span>Progreso global</span>
+      <span id="prog-pct">0 / 18</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+  </div>
+  <nav id="sb-nav">
+    <div class="block-label">Bloque 1 — Fundamentos</div>
+    <a class="nav-item" data-mod="1" href="#mod1"><span class="nv-num">01</span>Las 4 Fuerzas<span class="nv-icon" id="ni1">○</span></a>
+    <a class="nav-item nav-locked" data-mod="2" href="#mod2"><span class="nv-num">02</span>Propulsión y Empuje<span class="nv-icon" id="ni2">🔒</span></a>
+    <a class="nav-item nav-locked" data-mod="3" href="#mod3"><span class="nv-num">03</span>Ecuación del Cohete<span class="nv-icon" id="ni3">🔒</span></a>
+    <a class="nav-item nav-locked" data-mod="4" href="#mod4"><span class="nv-num">04</span>Aerodinámica<span class="nv-icon" id="ni4">🔒</span></a>
+    <a class="nav-item nav-locked" data-mod="5" href="#mod5"><span class="nv-num">05</span>Atmósfera ISA<span class="nv-icon" id="ni5">🔒</span></a>
+
+    <div class="block-label">Bloque 2 — Matemáticas</div>
+    <a class="nav-item nav-locked" data-mod="6" href="#mod6"><span class="nv-num">06</span>Sin solución analítica<span class="nv-icon">🔒</span></a>
+    <a class="nav-item nav-locked" data-mod="7" href="#mod7"><span class="nv-num">07</span>Método de Euler<span class="nv-icon">🔒</span></a>
+    <a class="nav-item nav-locked" data-mod="8" href="#mod8"><span class="nv-num">08</span>RK4<span class="nv-icon">🔒</span></a>
+    <a class="nav-item nav-locked" data-mod="9" href="#mod9"><span class="nv-num">09</span>Gravedad y Max-Q<span class="nv-icon">🔒</span></a>
+
+    <div class="block-label">Bloque 3 — Mecánica Orbital</div>
+    <a class="nav-item nav-locked" data-mod="10" href="#mod10"><span class="nv-num">10</span>Órbitas<span class="nv-icon">🔒</span></a>
+    <a class="nav-item nav-locked" data-mod="11" href="#mod11"><span class="nv-num">11</span>Tipos de Órbita<span class="nv-icon">🔒</span></a>
+    <a class="nav-item nav-locked" data-mod="12" href="#mod12"><span class="nv-num">12</span>Velocidad Orbital<span class="nv-icon">🔒</span></a>
+    <a class="nav-item nav-locked" data-mod="13" href="#mod13"><span class="nv-num">13</span>Hohmann<span class="nv-icon">🔒</span></a>
+    <a class="nav-item nav-locked" data-mod="14" href="#mod14"><span class="nv-num">14</span>Reentrada<span class="nv-icon">🔒</span></a>
+
+    <div class="block-label">Bloque 4 — GNC</div>
+    <a class="nav-item nav-locked" data-mod="15" href="#mod15"><span class="nv-num">15</span>Guiado y Navegación<span class="nv-icon">🔒</span></a>
+    <a class="nav-item nav-locked" data-mod="16" href="#mod16"><span class="nv-num">16</span>Máquina de Estados<span class="nv-icon">🔒</span></a>
+    <a class="nav-item nav-locked" data-mod="17" href="#mod17"><span class="nv-num">17</span>Control de Actitud<span class="nv-icon">🔒</span></a>
+    <a class="nav-item nav-locked" data-mod="18" href="#mod18"><span class="nv-num">18</span>Telemetría<span class="nv-icon">🔒</span></a>
+  </nav>
+</nav>
+
+<div id="mobile-overlay"></div>
+<button id="btn-menu" onclick="toggleSidebar()">☰</button>
+
+<!-- MAIN -->
+<main id="main">
+
+<!-- ═══ HERO ══════════════════════════════════════════ -->
+<section id="hero">
+  <span class="hero-eyebrow">Plataforma de Aprendizaje Aeroespacial</span>
+  <h1>Aprende la física<br>que mueve cohetes</h1>
+  <p class="hero-lead">
+    Desde las 4 fuerzas del vuelo hasta mecánica orbital y control de actitud.
+    18 módulos, demos interactivas y tests que desbloquean el siguiente nivel.
+  </p>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-v">4</div><div class="hstat-l">Bloques</div></div>
+    <div class="hstat"><div class="hstat-v">18</div><div class="hstat-l">Módulos</div></div>
+    <div class="hstat"><div class="hstat-v">18</div><div class="hstat-l">Demos interactivas</div></div>
+    <div class="hstat"><div class="hstat-v">54</div><div class="hstat-l">Preguntas de test</div></div>
+  </div>
+  <a href="#mod1" class="btn-cta">Empezar — Módulo 1 →</a>
+</section>
+
+<!-- ═══ BLOQUE 1 ═══════════════════════════════════════ -->
+<div class="block-sep" id="bloque1">
+  <div class="block-sep-inner">
+    <div class="block-badge bb-1">Bloque 1</div>
+    <div class="block-title">Fundamentos de Vuelo</div>
+    <div class="block-desc">Las leyes físicas que gobiernan cualquier objeto que vuela — desde una pelota hasta un cohete orbital.</div>
+  </div>
+</div>
+
+<!-- ─── MÓDULO 1 ─── -->
+<section class="module" id="mod1" data-module="1">
+  <div class="mod-lock-overlay hidden" id="lock1"></div>
+
+  <div class="mod-tag">Módulo 01 · Bloque 1 — Fundamentos</div>
+  <h2>Las 4 Fuerzas del Vuelo</h2>
+
+  <p>Todo objeto que se mueve por la atmósfera está sometido a exactamente cuatro fuerzas fundamentales. Comprenderlas es el primer paso para entender cómo vuela cualquier cosa: un avión, un misil, o el cohete más potente del mundo.</p>
+
+  <div class="igrid">
+    <div class="icard">
+      <div class="icard-l" style="color:var(--orange)">↑ Empuje (T)</div>
+      <div class="icard-v" style="color:var(--orange)">Thrust</div>
+      <div class="icard-d">Generado por el motor. Actúa en la dirección del eje del vehículo.</div>
+    </div>
+    <div class="icard">
+      <div class="icard-l" style="color:var(--red)">↓ Peso (W)</div>
+      <div class="icard-v" style="color:var(--red)">Weight</div>
+      <div class="icard-d">W = m·g(h). Decrece al quemar propelente y al ganar altitud.</div>
+    </div>
+    <div class="icard">
+      <div class="icard-l" style="color:var(--blue)">← Arrastre (D)</div>
+      <div class="icard-v" style="color:var(--blue)">Drag</div>
+      <div class="icard-d">D = ½ρv²CdA. Siempre opuesto al movimiento. Crece con v².</div>
+    </div>
+    <div class="icard">
+      <div class="icard-l" style="color:var(--green)">⊥ Sustentación (L)</div>
+      <div class="icard-v" style="color:var(--green)">Lift</div>
+      <div class="icard-d">Perpendicular al movimiento. En cohetes verticales ≈ 0 durante el ascenso recto.</div>
+    </div>
+  </div>
+
+  <details class="deep">
+    <summary>Profundizar — Segunda Ley de Newton y ecuaciones</summary>
+    <div class="deep-body">
+      <h4>Aceleración neta (ascenso vertical)</h4>
+      <div class="eq">
+        <div class="eq-label">Segunda Ley de Newton aplicada al cohete</div>
+        <div class="eq-main">a = (T − D − W) / m</div>
+        <div class="eq-sub">T = empuje [N] · D = arrastre [N] · W = m·g(h) [N] · m = masa actual [kg]</div>
+      </div>
+      <div class="eq">
+        <div class="eq-label">Fuerza de arrastre</div>
+        <div class="eq-main">D = ½ · ρ · v² · C<sub>d</sub> · A</div>
+        <div class="eq-sub">ρ = densidad del aire [kg/m³] · v = velocidad [m/s] · Cd = coeficiente de arrastre · A = área de referencia [m²]</div>
+      </div>
+      <h4>Relación de empuje-peso (T/W)</h4>
+      <p style="font-size:.85rem;color:var(--t2)">El cociente T/W determina si el cohete despega. Necesita T/W &gt; 1 en el lanzamiento. El Falcon 9 tiene T/W ≈ 1.37 al despegue; el Saturn V, ≈ 1.17.</p>
+      <div class="hl"><strong>Nota clave:</strong> el arrastre crece con el cuadrado de la velocidad — si doblas la velocidad, el arrastre se cuadruplica. Por eso los aviones supersónicos necesitan motores desproporcionadamente más potentes que los subsónicos.</div>
+    </div>
+  </details>
+
+  <!-- DEMO 1 -->
+  <div class="demo">
+    <div class="demo-head"><div class="demo-dot"></div>Demo — Diagrama de Cuerpo Libre Interactivo</div>
+    <div class="demo-body">
+      <div class="srow"><label>Empuje T [N]</label><input type="range" id="d1-T" min="0" max="80000" value="30000" step="500" oninput="demo1()"><span class="sval" id="sv1-T">30 000 N</span></div>
+      <div class="srow"><label>Masa m [kg]</label><input type="range" id="d1-m" min="500" max="5000" value="2500" step="50" oninput="demo1()"><span class="sval" id="sv1-m">2 500 kg</span></div>
+      <div class="srow"><label>Velocidad v [m/s]</label><input type="range" id="d1-v" min="0" max="2000" value="200" step="10" oninput="demo1()"><span class="sval" id="sv1-v">200 m/s</span></div>
+      <div class="srow"><label>Altitud h [km]</label><input type="range" id="d1-h" min="0" max="80" value="10" step="1" oninput="demo1()"><span class="sval" id="sv1-h">10 km</span></div>
+      <canvas id="cv1" class="dcanvas" height="230"></canvas>
+      <div class="rrow" id="rrow1">
+        <div class="rrow-item"><div class="rl">Aceleración neta</div><div><span class="rv" id="r1-a">0.0</span> <span class="ru">m/s²</span></div></div>
+        <div class="rrow-item"><div class="rl">Peso W</div><div><span class="rv" id="r1-W" style="color:var(--red)">0</span> <span class="ru">N</span></div></div>
+        <div class="rrow-item"><div class="rl">Arrastre D</div><div><span class="rv" id="r1-D" style="color:var(--blue)">0</span> <span class="ru">N</span></div></div>
+        <div class="rrow-item"><div class="rl">T/W</div><div><span class="rv" id="r1-tw" style="color:var(--green)">—</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ 1 -->
+  <div class="quiz-section" id="quiz1"></div>
+</section>
+
+<!-- ─── MÓDULO 2 ─── -->
+<section class="module" id="mod2" data-module="2">
+  <div class="mod-lock-overlay" id="lock2">
+    <div class="lock-icon-big">🔒</div>
+    <div class="lock-title">Módulo 2 bloqueado</div>
+    <div class="lock-hint">Completa el test del Módulo 1 para continuar</div>
+  </div>
+
+  <div class="mod-tag">Módulo 02 · Bloque 1 — Fundamentos</div>
+  <h2>Propulsión y Empuje</h2>
+
+  <p>¿Cómo genera empuje un motor cohete? No hay palanca, no hay rueda, no hay nada que empujar contra el suelo. La respuesta está en la conservación del momento: expulsa masa hacia atrás, y la reacción te impulsa hacia adelante.</p>
+
+  <p>El motor TEPREL-1B del MIURA 1 quema LOX y etanol. Los gases a alta temperatura se aceleran en una tobera <strong style="color:var(--text)">De Laval</strong> que convierte calor en velocidad de salida.</p>
+
+  <details class="deep">
+    <summary>Profundizar — La ecuación de empuje completa</summary>
+    <div class="deep-body">
+      <h4>Ecuación de empuje total</h4>
+      <div class="eq">
+        <div class="eq-label">Empuje total (dos términos)</div>
+        <div class="eq-main">F = ṁ · V<sub>e</sub> + (P<sub>e</sub> − P<sub>a</sub>) · A<sub>e</sub></div>
+        <div class="eq-sub">ṁ = flujo másico [kg/s] · Ve = velocidad de salida [m/s] · Pe = presión en la salida [Pa] · Pa = presión ambiente [Pa] · Ae = área de salida [m²]</div>
+      </div>
+      <p style="font-size:.85rem;color:var(--t2)">El primer término (ṁ·Ve) es el <strong style="color:var(--text)">empuje por momento</strong> — siempre positivo. El segundo ((Pe−Pa)·Ae) es el <strong style="color:var(--text)">empuje por presión</strong>: en el vacío Pe > Pa = 0, suma. A nivel del mar, si Pe &lt; Pa (tobera sobreexpandida), resta.</p>
+      <h4>Impulso específico (Isp)</h4>
+      <div class="eq">
+        <div class="eq-label">Isp — la "eficiencia de combustible" del motor</div>
+        <div class="eq-main">Isp = F / (ṁ · g<sub>0</sub>)  [segundos]</div>
+        <div class="eq-sub">g₀ = 9.80665 m/s². A mayor Isp, más empuje por kg de propelente consumido.</div>
+      </div>
+      <table>
+        <tr><th>Motor</th><th>Propelente</th><th>Isp vac [s]</th></tr>
+        <tr><td>TEPREL-1B (MIURA 1)</td><td>LOX / Etanol</td><td>~290</td></tr>
+        <tr><td>Merlin 1D (Falcon 9)</td><td>LOX / RP-1</td><td>311</td></tr>
+        <tr><td>Raptor 3 (Starship)</td><td>LOX / CH₄</td><td>380</td></tr>
+        <tr><td>RS-25 (SLS)</td><td>LOX / LH₂</td><td>453</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <!-- DEMO 2 -->
+  <div class="demo">
+    <div class="demo-head"><div class="demo-dot"></div>Demo — Calculadora de Empuje</div>
+    <div class="demo-body">
+      <div class="srow"><label>Flujo másico ṁ [kg/s]</label><input type="range" id="d2-mdot" min="1" max="40" value="10.5" step="0.1" oninput="demo2()"><span class="sval" id="sv2-mdot">10.5 kg/s</span></div>
+      <div class="srow"><label>Vel. de salida Ve [m/s]</label><input type="range" id="d2-ve" min="500" max="4500" value="2843" step="10" oninput="demo2()"><span class="sval" id="sv2-ve">2 843 m/s</span></div>
+      <div class="srow"><label>ΔP = Pe − Pa [kPa]</label><input type="range" id="d2-dp" min="-30" max="200" value="0" step="1" oninput="demo2()"><span class="sval" id="sv2-dp">0 kPa</span></div>
+      <div class="srow"><label>Área salida Ae [cm²]</label><input type="range" id="d2-ae" min="5" max="600" value="80" step="1" oninput="demo2()"><span class="sval" id="sv2-ae">80 cm²</span></div>
+      <div class="rrow">
+        <div class="rrow-item"><div class="rl">Empuje total F</div><div><span class="rv" id="r2-F">29 852</span> <span class="ru">N</span></div></div>
+        <div class="rrow-item"><div class="rl">Isp calculado</div><div><span class="rv" id="r2-isp" style="color:var(--green)">290.0</span> <span class="ru">s</span></div></div>
+        <div class="rrow-item"><div class="rl">Empuje ×g₀/ṁ</div><div><span class="rv" id="r2-ve2" style="color:var(--blue)">2 843</span> <span class="ru">m/s eff</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-section" id="quiz2"></div>
+</section>
+
+<!-- ─── MÓDULO 3 ─── -->
+<section class="module" id="mod3" data-module="3">
+  <div class="mod-lock-overlay" id="lock3">
+    <div class="lock-icon-big">🔒</div>
+    <div class="lock-title">Módulo 3 bloqueado</div>
+    <div class="lock-hint">Completa el test del Módulo 2 para continuar</div>
+  </div>
+
+  <div class="mod-tag">Módulo 03 · Bloque 1 — Fundamentos</div>
+  <h2>La Ecuación del Cohete</h2>
+
+  <p>En 1903, el maestro de escuela ruso Konstantín Tsiolkovsky derivó la ecuación más fundamental de la propulsión coheteril: la relación entre la velocidad que puede ganar un cohete, la eficiencia de su motor y la fracción de masa que quema.</p>
+
+  <p>Esta ecuación explica por qué llegar a órbita es tan difícil: el propelente pesa tanto que necesitas propelente para transportar el propelente.</p>
+
+  <details class="deep">
+    <summary>Profundizar — Derivación y el problema de la fracción másica</summary>
+    <div class="deep-body">
+      <h4>Derivación intuitiva</h4>
+      <p style="font-size:.85rem;color:var(--t2)">Imagina un cohete en el vacío. Cada instante expulsa una masa dm a velocidad Ve. Por conservación del momento, el cohete gana velocidad dv = −Ve·dm/m. Integrando de m₀ a mf:</p>
+      <div class="eq">
+        <div class="eq-label">Ecuación de Tsiolkovsky — velocidad de cohete ideal</div>
+        <div class="eq-main">Δv = Isp · g<sub>0</sub> · ln(m<sub>0</sub> / m<sub>f</sub>)</div>
+        <div class="eq-sub">m₀ = masa inicial (húmeda) · mf = masa final (seca) · g₀ = 9.80665 m/s²</div>
+      </div>
+      <h4>El problema logarítmico</h4>
+      <p style="font-size:.85rem;color:var(--t2)">El Δv crece solo como el logaritmo de la relación de masa. Para <em>duplicar</em> el Δv necesitas elevar la relación de masa al cuadrado.</p>
+      <table>
+        <tr><th>m₀/mf</th><th>Δv / (Isp·g₀)</th><th>% propelente</th></tr>
+        <tr><td>2</td><td>0.693</td><td>50%</td></tr>
+        <tr><td>3.5 (MIURA 1)</td><td>1.253</td><td>71.4%</td></tr>
+        <tr><td>10</td><td>2.303</td><td>90%</td></tr>
+        <tr><td>20</td><td>3.0</td><td>95%</td></tr>
+      </table>
+      <div class="hl"><strong>LEO requiere ~9 400 m/s de Δv</strong> (incluyendo pérdidas por arrastre y gravedad). Con Isp = 290 s, necesitas una relación de masa m₀/mf ≈ 26 — por eso los cohetes para órbita usan múltiples etapas.</div>
+    </div>
+  </details>
+
+  <!-- DEMO 3 -->
+  <div class="demo">
+    <div class="demo-head"><div class="demo-dot"></div>Demo — Visualizador de Tsiolkovsky</div>
+    <div class="demo-body">
+      <div class="srow"><label>Masa húmeda m₀ [kg]</label><input type="range" id="d3-m0" min="1000" max="8000" value="3500" step="50" oninput="demo3()"><span class="sval" id="sv3-m0">3 500 kg</span></div>
+      <div class="srow"><label>Masa seca mf [kg]</label><input type="range" id="d3-mf" min="200" max="2000" value="1000" step="50" oninput="demo3()"><span class="sval" id="sv3-mf">1 000 kg</span></div>
+      <div class="srow"><label>Isp [s]</label><input type="range" id="d3-isp" min="100" max="460" value="290" step="1" oninput="demo3()"><span class="sval" id="sv3-isp">290 s</span></div>
+      <div class="rrow">
+        <div class="rrow-item"><div class="rl">Δv</div><div><span class="rv" id="r3-dv">3 562</span> <span class="ru">m/s</span></div></div>
+        <div class="rrow-item"><div class="rl">Relación de masa</div><div><span class="rv" id="r3-mr" style="color:var(--green)">3.50</span></div></div>
+        <div class="rrow-item"><div class="rl">% propelente</div><div><span class="rv" id="r3-pct" style="color:var(--blue)">71.4</span> <span class="ru">%</span></div></div>
+      </div>
+      <div class="dvbar-wrap">
+        <div class="dvbar-sub">Δv relativo — referencia: LEO ≈ 9 400 m/s</div>
+        <div class="dvbar-track">
+          <div class="dvbar-fill" id="dvbar" style="width:37.9%">3 562 m/s</div>
+        </div>
+        <div class="dvbar-labels"><span>0</span><span>LEO 9 400 m/s</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-section" id="quiz3"></div>
+</section>
+
+<!-- ─── MÓDULO 4 ─── -->
+<section class="module" id="mod4" data-module="4">
+  <div class="mod-lock-overlay" id="lock4">
+    <div class="lock-icon-big">🔒</div>
+    <div class="lock-title">Módulo 4 bloqueado</div>
+    <div class="lock-hint">Completa el test del Módulo 3 para continuar</div>
+  </div>
+
+  <div class="mod-tag">Módulo 04 · Bloque 1 — Fundamentos</div>
+  <h2>Aerodinámica y Número de Mach</h2>
+
+  <p>A medida que un cohete acelera, el aire a su alrededor cambia de comportamiento de formas contraintuitivas. La velocidad del sonido — y cómo nos acercamos a ella — dicta toda la aerodinámica.</p>
+
+  <p>El <strong style="color:var(--text)">número de Mach</strong> es la velocidad del vehículo dividida por la velocidad local del sonido. No es una velocidad fija: a 11 km de altitud el sonido viaja a ~295 m/s, 20 m/s más lento que en la superficie.</p>
+
+  <details class="deep">
+    <summary>Profundizar — Regímenes, Cd y la barrera del sonido</summary>
+    <div class="deep-body">
+      <h4>Número de Mach</h4>
+      <div class="eq">
+        <div class="eq-label">Mach — velocidad relativa al sonido local</div>
+        <div class="eq-main">Ma = v / a(h)  donde  a(h) = √(γ · R · T(h))</div>
+        <div class="eq-sub">γ = 1.4 (aire) · R = 287 J/(kg·K) · T(h) = temperatura local [K]</div>
+      </div>
+      <table>
+        <tr><th>Régimen</th><th>Mach</th><th>Fenómenos</th></tr>
+        <tr><td>Subsónico</td><td>&lt; 0.8</td><td>Cd estable y bajo</td></tr>
+        <tr><td>Transónico</td><td>0.8 – 1.2</td><td>Ondas de choque locales, pico de Cd</td></tr>
+        <tr><td>Supersónico</td><td>1.2 – 5</td><td>Choque adjunto al morro, Cd cae con Ma</td></tr>
+        <tr><td>Hipersónico</td><td>&gt; 5</td><td>Ionización, efectos cinéticos</td></tr>
+      </table>
+      <h4>Fuerza de arrastre completa</h4>
+      <div class="eq">
+        <div class="eq-label">Arrastre aerodinámico</div>
+        <div class="eq-main">D = ½ · ρ · v² · C<sub>d</sub>(Ma) · A</div>
+        <div class="eq-sub">Cd depende del Mach — por eso no se puede modelar como constante</div>
+      </div>
+      <div class="hl blue"><strong>Curva Cd(Ma):</strong> el pico transónico ("barrera del sonido") no es una barrera física sino un régimen donde se forman ondas de choque que incrementan el arrastre drásticamente. Pasado Mach 1.2, el Cd empieza a caer de nuevo.</div>
+    </div>
+  </details>
+
+  <!-- DEMO 4 -->
+  <div class="demo">
+    <div class="demo-head"><div class="demo-dot"></div>Demo — Curva Cd vs Mach (cuerpo de revolución)</div>
+    <div class="demo-body">
+      <canvas id="cv4" class="dcanvas" height="220"></canvas>
+      <p style="font-size:.75rem;color:var(--t3);text-align:center;margin-top:6px">Mueve el cursor sobre la gráfica para inspeccionar cada punto</p>
+    </div>
+  </div>
+
+  <div class="quiz-section" id="quiz4"></div>
+</section>
+
+<!-- ─── MÓDULO 5 ─── -->
+<section class="module" id="mod5" data-module="5">
+  <div class="mod-lock-overlay" id="lock5">
+    <div class="lock-icon-big">🔒</div>
+    <div class="lock-title">Módulo 5 bloqueado</div>
+    <div class="lock-hint">Completa el test del Módulo 4 para continuar</div>
+  </div>
+
+  <div class="mod-tag">Módulo 05 · Bloque 1 — Fundamentos</div>
+  <h2>Modelo de Atmósfera ISA</h2>
+
+  <p>Para calcular el arrastre en cualquier altitud necesitamos saber la densidad, presión y temperatura del aire. La <strong style="color:var(--text)">Atmósfera Estándar Internacional (ISA)</strong> es el modelo matemático acordado internacionalmente que define estos valores.</p>
+
+  <p>No es una medición real de la atmósfera — es un modelo de referencia para que todos los ingenieros calculen lo mismo. La atmósfera real varía con el tiempo, la latitud y la estación del año.</p>
+
+  <details class="deep">
+    <summary>Profundizar — Capas y ecuaciones de la ISA</summary>
+    <div class="deep-body">
+      <table>
+        <tr><th>Capa</th><th>Rango [km]</th><th>Gradiente [K/km]</th></tr>
+        <tr><td>Troposfera</td><td>0 – 11</td><td>−6.5 (enfría)</td></tr>
+        <tr><td>Estratosfera baja</td><td>11 – 20</td><td>0 (isoterma)</td></tr>
+        <tr><td>Estratosfera alta</td><td>20 – 32</td><td>+1.0 (calienta)</td></tr>
+        <tr><td>Estratosfera sup.</td><td>32 – 47</td><td>+2.8</td></tr>
+        <tr><td>Mesosfera</td><td>47 – 86</td><td>negativo</td></tr>
+      </table>
+      <h4>Ecuaciones por capas</h4>
+      <div class="eq">
+        <div class="eq-label">Temperatura con gradiente L ≠ 0</div>
+        <div class="eq-main">T(h) = T<sub>b</sub> + L · (h − h<sub>b</sub>)</div>
+        <div class="eq-sub">T₀ = 288.15 K (15°C) al nivel del mar · L = −0.0065 K/m en troposfera</div>
+      </div>
+      <div class="eq">
+        <div class="eq-label">Presión con gradiente (troposfera)</div>
+        <div class="eq-main">P = P<sub>b</sub> · (T/T<sub>b</sub>)<sup>−g/(R·L)</sup></div>
+        <div class="eq-sub">Exponente ≈ 5.256 · P₀ = 101 325 Pa</div>
+      </div>
+      <div class="eq">
+        <div class="eq-label">Densidad — gas ideal</div>
+        <div class="eq-main">ρ = P / (R · T)</div>
+        <div class="eq-sub">R = 287.058 J/(kg·K) · ρ₀ = 1.225 kg/m³</div>
+      </div>
+      <div class="hl green"><strong>Por qué importa:</strong> el arrastre D = ½ρv²CdA depende directamente de ρ. A 11 km de altitud, ρ es solo el 33% del valor en superficie, por lo que el arrastre cae a un tercio aunque el Cd sea similar.</div>
+    </div>
+  </details>
+
+  <!-- DEMO 5 -->
+  <div class="demo">
+    <div class="demo-head"><div class="demo-dot"></div>Demo — Perfil de Atmósfera ISA</div>
+    <div class="demo-body">
+      <div class="srow"><label>Altitud h [km]</label><input type="range" id="d5-h" min="0" max="86" value="0" step="0.5" oninput="demo5()"><span class="sval" id="sv5-h">0 km</span></div>
+      <div class="atmgrid">
+        <div class="atmcard">
+          <div class="al">Temperatura</div>
+          <div class="av" id="isa-T" style="color:var(--orange)">288.15 K</div>
+          <div class="as" id="isa-Tc">15.0 °C</div>
+        </div>
+        <div class="atmcard">
+          <div class="al">Presión</div>
+          <div class="av" id="isa-P" style="color:var(--blue)">101 325 Pa</div>
+          <div class="as" id="isa-Patm">1.0000 atm</div>
+        </div>
+        <div class="atmcard">
+          <div class="al">Densidad</div>
+          <div class="av" id="isa-rho" style="color:var(--green)">1.2250 kg/m³</div>
+          <div class="as" id="isa-pct">100.00%</div>
+        </div>
+      </div>
+      <canvas id="cv5" class="dcanvas" height="200"></canvas>
+    </div>
+  </div>
+
+  <div class="quiz-section" id="quiz5"></div>
+</section>
+
+<!-- Placeholders bloques 2-4 (se añadirán próximas sesiones) -->
+<section id="bloque2-coming" style="max-width:840px;margin:0 auto;padding:64px 40px;text-align:center;border-top:1px solid var(--border)">
+  <div style="background:var(--s2);border:1px dashed var(--border);border-radius:12px;padding:40px 24px">
+    <div style="font-size:2rem;margin-bottom:12px">🚀</div>
+    <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:700;color:var(--t2);margin-bottom:8px">Bloques 2, 3 y 4 — Próximamente</div>
+    <div style="font-size:.85rem;color:var(--t3)">Matemáticas del vuelo · Mecánica orbital · Guiado, Navegación y Control</div>
+  </div>
+</section>
+
+</main><!-- end #main -->
+
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════════
+   PHYSICS HELPERS
+═══════════════════════════════════════════════════════ */
+const G0 = 9.80665;
+const R_AIR = 287.058;
+const GAMMA = 1.4;
+const CD_MIURA = 0.35;
+const A_REF = Math.PI * 0.35 * 0.35; // π·(0.35)² ≈ 0.385 m²
+
+function isaAtmosphere(h_m) {
+  // ISA layers: [base_altitude_m, base_temp_K, lapse_rate_K/m, base_pressure_Pa]
+  const L = [
+    [0,      288.15, -0.0065, 101325.0],
+    [11000,  216.65,  0,       22632.1],
+    [20000,  216.65,  0.001,    5474.89],
+    [32000,  228.65,  0.0028,    868.019],
+    [47000,  270.65,  0,         110.906],
+    [51000,  270.65, -0.0028,    66.9389],
+    [71000,  214.65, -0.002,      3.95642],
+    [86000,  186.87,  0,          0.3734],
+  ];
+  if (h_m >= 86000) return { T: 186.87, P: 0.001, rho: 0.000006 };
+  let lay = L[0];
+  for (let i = 0; i < L.length - 1; i++) { if (h_m < L[i+1][0]) { lay = L[i]; break; } lay = L[i+1]; }
+  const [hb, Tb, lr, Pb] = lay;
+  const dh = h_m - hb;
+  let T, P;
+  if (Math.abs(lr) < 1e-12) {
+    T = Tb;
+    P = Pb * Math.exp(-G0 * dh / (R_AIR * T));
+  } else {
+    T = Tb + lr * dh;
+    P = Pb * Math.pow(T / Tb, -G0 / (R_AIR * lr));
+  }
+  return { T, P, rho: P / (R_AIR * T) };
+}
+
+function grav(h_m) { return G0 * Math.pow(6371000 / (6371000 + h_m), 2); }
+
+function cdMach(ma) {
+  if (ma < 0.5)  return 0.22;
+  if (ma < 0.8)  return 0.22 + (ma - 0.5) / 0.3 * 0.05;
+  if (ma < 0.95) return 0.27 + (ma - 0.8) / 0.15 * 0.12;
+  if (ma < 1.05) return 0.39 + (ma - 0.95) / 0.1 * 0.12;
+  if (ma < 1.2)  return 0.51 - (ma - 1.05) / 0.15 * 0.15;
+  if (ma < 2.0)  return 0.36 - (ma - 1.2) / 0.8 * 0.08;
+  if (ma < 4.0)  return 0.28 - (ma - 2.0) / 2.0 * 0.05;
+  return 0.23;
+}
+
+function fmt(n, dec=0) {
+  return n.toLocaleString('es-ES', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+}
+
+/* ═══════════════════════════════════════════════════════
+   CANVAS HELPERS
+═══════════════════════════════════════════════════════ */
+function setupCanvas(id, h) {
+  const cv = document.getElementById(id);
+  if (!cv) return null;
+  cv.width  = cv.offsetWidth || cv.parentElement.offsetWidth || 600;
+  cv.height = h;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = '#0d1117';
+  ctx.fillRect(0, 0, cv.width, cv.height);
+  return { cv, ctx, W: cv.width, H: h };
+}
+
+function drawAxes(ctx, pad, W, H, xLabels, yLabels, xTitle, yTitle) {
+  const cw = W - pad.l - pad.r, ch = H - pad.t - pad.b;
+  ctx.strokeStyle = '#30363d'; ctx.lineWidth = 1;
+  // grid
+  ctx.setLineDash([2, 4]);
+  yLabels.forEach((v, i) => {
+    const y = pad.t + ch * i / (yLabels.length - 1);
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cw, y); ctx.stroke();
+    ctx.fillStyle = '#6e7681'; ctx.font = '9px JetBrains Mono';
+    ctx.textAlign = 'right'; ctx.fillText(v, pad.l - 4, y + 3);
+  });
+  xLabels.forEach((v, i) => {
+    const x = pad.l + cw * i / (xLabels.length - 1);
+    ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, pad.t + ch); ctx.stroke();
+    ctx.fillStyle = '#6e7681'; ctx.font = '9px JetBrains Mono';
+    ctx.textAlign = 'center'; ctx.fillText(v, x, pad.t + ch + 14);
+  });
+  ctx.setLineDash([]);
+  // axes
+  ctx.strokeStyle = '#30363d'; ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t + ch); ctx.lineTo(pad.l + cw, pad.t + ch);
+  ctx.stroke();
+  // titles
+  if (xTitle) {
+    ctx.fillStyle = '#8b949e'; ctx.font = '10px Inter';
+    ctx.textAlign = 'center'; ctx.fillText(xTitle, pad.l + cw / 2, H - 2);
+  }
+  if (yTitle) {
+    ctx.save(); ctx.translate(11, pad.t + ch / 2); ctx.rotate(-Math.PI / 2);
+    ctx.fillStyle = '#8b949e'; ctx.font = '10px Inter';
+    ctx.textAlign = 'center'; ctx.fillText(yTitle, 0, 0);
+    ctx.restore();
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   DEMO 1 — FREE BODY DIAGRAM
+═══════════════════════════════════════════════════════ */
+function demo1() {
+  const T = +document.getElementById('d1-T').value;
+  const m = +document.getElementById('d1-m').value;
+  const v = +document.getElementById('d1-v').value;
+  const h = +document.getElementById('d1-h').value * 1000;
+  document.getElementById('sv1-T').textContent = fmt(T) + ' N';
+  document.getElementById('sv1-m').textContent = fmt(m) + ' kg';
+  document.getElementById('sv1-v').textContent = v + ' m/s';
+  document.getElementById('sv1-h').textContent = document.getElementById('d1-h').value + ' km';
+
+  const atm = isaAtmosphere(h);
+  const g   = grav(h);
+  const D   = 0.5 * atm.rho * v * v * CD_MIURA * A_REF;
+  const W   = m * g;
+  const a   = (T - D - W) / m;
+  const tw  = T / W;
+
+  document.getElementById('r1-a').textContent  = a.toFixed(2);
+  document.getElementById('r1-W').textContent  = fmt(Math.round(W));
+  document.getElementById('r1-D').textContent  = fmt(Math.round(D));
+  document.getElementById('r1-tw').textContent = tw.toFixed(2);
+  document.getElementById('r1-a').style.color  = a >= 0 ? 'var(--green)' : 'var(--red)';
+
+  // draw FBD
+  const s = setupCanvas('cv1', 230);
+  if (!s) return;
+  const { ctx, W: cw, H: ch } = s;
+  const cx = cw / 2, cy = ch / 2;
+
+  // rocket silhouette
+  ctx.fillStyle = '#21262d'; ctx.strokeStyle = '#30363d'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.roundRect(cx - 13, cy - 38, 26, 65, 4); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#30363d';
+  ctx.beginPath(); ctx.moveTo(cx - 13, cy - 38); ctx.lineTo(cx, cy - 62); ctx.lineTo(cx + 13, cy - 38); ctx.fill();
+  // fins
+  ctx.fillStyle = '#21262d';
+  ctx.beginPath(); ctx.moveTo(cx - 13, cy + 22); ctx.lineTo(cx - 22, cy + 40); ctx.lineTo(cx - 13, cy + 27); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(cx + 13, cy + 22); ctx.lineTo(cx + 22, cy + 40); ctx.lineTo(cx + 13, cy + 27); ctx.fill();
+
+  const maxF = Math.max(T, W, D, 100);
+  const sc = 75 / maxF;
+
+  function arrow(x, y, dy, color, label) {
+    const ey = y - dy;
+    ctx.strokeStyle = color; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, ey); ctx.stroke();
+    const dir = dy > 0 ? -1 : 1;
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.moveTo(x, ey); ctx.lineTo(x - 5, ey + dir * 10); ctx.lineTo(x + 5, ey + dir * 10); ctx.fill();
+    ctx.fillStyle = color; ctx.font = 'bold 10px Inter'; ctx.textAlign = 'center';
+    ctx.fillText(label, x, ey - dir * 8);
+  }
+
+  const Tlen = Math.min(T * sc, 85);
+  const Wlen = Math.min(W * sc, 72);
+  const Dlen = Math.min(D * sc, 60);
+  arrow(cx,      cy + 32, Tlen,  '#f97316', fmt(T) + 'N T');
+  arrow(cx + 34, cy - 5, -Wlen, '#f43f5e', 'W ' + fmt(Math.round(W)) + 'N');
+  arrow(cx - 34, cy - 5, -Dlen, '#3b82f6', 'D ' + fmt(Math.round(D)) + 'N');
+
+  ctx.fillStyle = a >= 0 ? '#10b981' : '#f43f5e';
+  ctx.font = 'bold 11px Inter'; ctx.textAlign = 'left';
+  ctx.fillText('a = ' + (a >= 0 ? '+' : '') + a.toFixed(2) + ' m/s²', 8, 18);
+}
+
+/* ═══════════════════════════════════════════════════════
+   DEMO 2 — THRUST CALCULATOR
+═══════════════════════════════════════════════════════ */
+function demo2() {
+  const mdot = +document.getElementById('d2-mdot').value;
+  const ve   = +document.getElementById('d2-ve').value;
+  const dp   = +document.getElementById('d2-dp').value * 1000; // Pa
+  const ae   = +document.getElementById('d2-ae').value / 10000; // m²
+  document.getElementById('sv2-mdot').textContent = mdot.toFixed(1) + ' kg/s';
+  document.getElementById('sv2-ve').textContent   = fmt(ve) + ' m/s';
+  document.getElementById('sv2-dp').textContent   = document.getElementById('d2-dp').value + ' kPa';
+  document.getElementById('sv2-ae').textContent   = document.getElementById('d2-ae').value + ' cm²';
+  const F   = mdot * ve + dp * ae;
+  const isp = F / (mdot * G0);
+  document.getElementById('r2-F').textContent   = fmt(Math.round(F));
+  document.getElementById('r2-isp').textContent = isp.toFixed(1);
+  document.getElementById('r2-ve2').textContent = fmt(Math.round(F / mdot));
+}
+
+/* ═══════════════════════════════════════════════════════
+   DEMO 3 — TSIOLKOVSKY
+═══════════════════════════════════════════════════════ */
+function demo3() {
+  const m0  = +document.getElementById('d3-m0').value;
+  const mf  = +document.getElementById('d3-mf').value;
+  const isp = +document.getElementById('d3-isp').value;
+  document.getElementById('sv3-m0').textContent  = fmt(m0) + ' kg';
+  document.getElementById('sv3-mf').textContent  = fmt(mf) + ' kg';
+  document.getElementById('sv3-isp').textContent = isp + ' s';
+
+  const mr  = m0 / Math.max(mf, 1);
+  const dv  = isp * G0 * Math.log(mr);
+  const pct = ((m0 - mf) / m0 * 100).toFixed(1);
+  document.getElementById('r3-dv').textContent  = fmt(Math.round(dv));
+  document.getElementById('r3-mr').textContent  = mr.toFixed(2);
+  document.getElementById('r3-pct').textContent = pct;
+  const barPct = Math.min(dv / 9400 * 100, 100).toFixed(1);
+  document.getElementById('dvbar').style.width       = barPct + '%';
+  document.getElementById('dvbar').textContent       = fmt(Math.round(dv)) + ' m/s';
+}
+
+/* ═══════════════════════════════════════════════════════
+   DEMO 4 — Cd vs MACH
+═══════════════════════════════════════════════════════ */
+function drawDemo4(hoverMa) {
+  const s = setupCanvas('cv4', 220);
+  if (!s) return;
+  const { cv, ctx, W, H } = s;
+  const pad = { t: 20, r: 24, b: 36, l: 50 };
+  const cw = W - pad.l - pad.r, ch = H - pad.t - pad.b;
+  const maMax = 5, cdMin = 0.15, cdMax = 0.58;
+
+  drawAxes(ctx, pad, W, H,
+    ['0', '1', '2', '3', '4', '5'],
+    ['0.55', '0.45', '0.35', '0.25', '0.15'],
+    'Número de Mach', 'Cd'
+  );
+
+  // regime labels
+  const lblY = pad.t + ch - 10;
+  ctx.font = '9px Inter'; ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(249,115,22,.5)';
+  ctx.fillText('SUBSÓNICO', pad.l + cw * 0.13, lblY);
+  ctx.fillStyle = 'rgba(251,191,36,.5)';
+  ctx.fillText('TRANSÓNICO', pad.l + cw * 0.205, pad.t + 14);
+  ctx.fillStyle = 'rgba(59,130,246,.5)';
+  ctx.fillText('SUPERSÓNICO', pad.l + cw * 0.55, lblY);
+
+  // Mach=1 dashed line
+  const x1 = pad.l + cw * (1 / maMax);
+  ctx.setLineDash([3, 4]); ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x1, pad.t); ctx.lineTo(x1, pad.t + ch); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // curve fill
+  ctx.beginPath();
+  const steps = 300;
+  for (let i = 0; i <= steps; i++) {
+    const ma = maMax * i / steps;
+    const cd = cdMach(ma);
+    const x = pad.l + cw * (ma / maMax);
+    const y = pad.t + ch * (1 - (cd - cdMin) / (cdMax - cdMin));
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.lineTo(pad.l + cw, pad.t + ch); ctx.lineTo(pad.l, pad.t + ch); ctx.closePath();
+  ctx.fillStyle = 'rgba(249,115,22,.06)'; ctx.fill();
+
+  // curve line
+  ctx.beginPath();
+  for (let i = 0; i <= steps; i++) {
+    const ma = maMax * i / steps;
+    const cd = cdMach(ma);
+    const x = pad.l + cw * (ma / maMax);
+    const y = pad.t + ch * (1 - (cd - cdMin) / (cdMax - cdMin));
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = '#f97316'; ctx.lineWidth = 2.5; ctx.stroke();
+
+  // hover marker
+  if (hoverMa !== undefined && hoverMa >= 0 && hoverMa <= maMax) {
+    const cd = cdMach(hoverMa);
+    const hx = pad.l + cw * (hoverMa / maMax);
+    const hy = pad.t + ch * (1 - (cd - cdMin) / (cdMax - cdMin));
+    ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+    ctx.beginPath(); ctx.moveTo(hx, pad.t); ctx.lineTo(hx, pad.t + ch); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(hx, hy, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#f97316'; ctx.fill();
+    ctx.strokeStyle = '#0d1117'; ctx.lineWidth = 1.5; ctx.stroke();
+    const lx = hx + (hoverMa > 3.5 ? -110 : 10);
+    ctx.fillStyle = 'rgba(13,17,23,.85)';
+    ctx.fillRect(lx - 4, hy - 18, 100, 20);
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 10px JetBrains Mono'; ctx.textAlign = 'left';
+    ctx.fillText('Ma=' + hoverMa.toFixed(2) + '  Cd=' + cd.toFixed(3), lx, hy - 4);
+  }
+
+  // attach hover if first time
+  if (!cv._hoverset) {
+    cv._hoverset = true;
+    cv.addEventListener('mousemove', e => {
+      const rect = cv.getBoundingClientRect();
+      const scaleX = cv.width / rect.width;
+      const mx = (e.clientX - rect.left) * scaleX;
+      const ma = (mx - pad.l) / cw * maMax;
+      drawDemo4(ma);
+    });
+    cv.addEventListener('mouseleave', () => drawDemo4());
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   DEMO 5 — ISA ATMOSPHERE
+═══════════════════════════════════════════════════════ */
+function drawISACanvas(hCur) {
+  const s = setupCanvas('cv5', 200);
+  if (!s) return;
+  const { ctx, W, H } = s;
+  const pad = { t: 14, r: 24, b: 28, l: 44 };
+  const cw = W - pad.l - pad.r, ch = H - pad.t - pad.b;
+  const hMax = 86;
+
+  drawAxes(ctx, pad, W, H,
+    ['0', '0.2', '0.4', '0.6', '0.8', '1.0'],
+    [hMax + 'km', '65km', '43km', '22km', '11km', '0km'],
+    '← Fracción del valor en superficie', ''
+  );
+
+  // three curves
+  const atm0 = isaAtmosphere(0);
+  const curves = [
+    { key: 'rho', norm: atm0.rho, color: '#10b981', label: 'ρ/ρ₀' },
+    { key: 'P',   norm: atm0.P,   color: '#3b82f6', label: 'P/P₀' },
+    { key: 'T',   norm: atm0.T,   color: '#f97316', label: 'T/T₀' },
+  ];
+  curves.forEach(c => {
+    ctx.beginPath();
+    for (let i = 0; i <= 200; i++) {
+      const h = hMax * 1000 * i / 200;
+      const atm = isaAtmosphere(h);
+      const frac = atm[c.key] / c.norm;
+      const x = pad.l + cw * Math.min(frac, 1);
+      const y = pad.t + ch * (1 - h / (hMax * 1000));
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = c.color; ctx.lineWidth = 2; ctx.stroke();
+    // label at h = 4km
+    const a4 = isaAtmosphere(4000);
+    const f4 = a4[c.key] / c.norm;
+    ctx.fillStyle = c.color; ctx.font = '9px Inter'; ctx.textAlign = 'left';
+    ctx.fillText(c.label, pad.l + cw * f4 + 3, pad.t + ch * (1 - 4000 / (hMax * 1000)));
+  });
+
+  // current altitude marker
+  const atm = isaAtmosphere(hCur * 1000);
+  const rF = atm.rho / atm0.rho;
+  const mx = pad.l + cw * Math.min(rF, 1);
+  const my = pad.t + ch * (1 - hCur / hMax);
+  ctx.strokeStyle = 'rgba(255,255,255,.3)'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+  ctx.beginPath(); ctx.moveTo(pad.l, my); ctx.lineTo(pad.l + cw, my); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.beginPath(); ctx.arc(mx, my, 5, 0, Math.PI * 2);
+  ctx.fillStyle = '#10b981'; ctx.fill();
+}
+
+function demo5() {
+  const h = +document.getElementById('d5-h').value;
+  document.getElementById('sv5-h').textContent = h + ' km';
+  const atm  = isaAtmosphere(h * 1000);
+  const atm0 = isaAtmosphere(0);
+  document.getElementById('isa-T').textContent    = atm.T.toFixed(2) + ' K';
+  document.getElementById('isa-Tc').textContent   = (atm.T - 273.15).toFixed(1) + ' °C';
+  document.getElementById('isa-P').textContent    = fmt(Math.round(atm.P)) + ' Pa';
+  document.getElementById('isa-Patm').textContent = (atm.P / 101325).toFixed(4) + ' atm';
+  document.getElementById('isa-rho').textContent  = atm.rho.toFixed(5) + ' kg/m³';
+  document.getElementById('isa-pct').textContent  = (atm.rho / atm0.rho * 100).toFixed(2) + '%';
+  drawISACanvas(h);
+}
+
+/* ═══════════════════════════════════════════════════════
+   QUIZ SYSTEM
+═══════════════════════════════════════════════════════ */
+const QUIZ_DATA = {
+  1: {
+    title: 'Test — Las 4 Fuerzas',
+    questions: [
+      {
+        q: '¿Cuál de las cuatro fuerzas siempre actúa en dirección contraria al movimiento del vehículo?',
+        opts: ['Empuje (Thrust)', 'Sustentación (Lift)', 'Arrastre (Drag)', 'Peso (Weight)'],
+        ans: 2,
+        hint: 'Esta fuerza es proporcional a v² y se define como D = ½ρv²CdA. Su dirección es siempre opuesta al vector velocidad.'
+      },
+      {
+        q: 'En un cohete que asciende verticalmente, si T = 35 000 N, W = 24 500 N y D = 2 000 N, la aceleración neta es...',
+        opts: ['Negativa (el cohete desacelera)', 'Cero (vuelo estacionario)', 'Positiva (el cohete acelera)', 'Imposible de calcular sin la masa'],
+        ans: 2,
+        hint: 'T − D − W = 35 000 − 2 000 − 24 500 = 8 500 N > 0. Por la 2ª ley de Newton, F neta > 0 → aceleración positiva hacia arriba.'
+      },
+      {
+        q: 'La fuerza de arrastre D = ½ρv²CdA. Si la velocidad se duplica (v → 2v), manteniendo todo lo demás constante, el arrastre...',
+        opts: ['Se duplica (×2)', 'Se triplica (×3)', 'Se cuadruplica (×4)', 'Se mantiene igual'],
+        ans: 2,
+        hint: 'El arrastre depende de v². Si v → 2v, entonces v² → (2v)² = 4v². El arrastre se multiplica por 4.'
+      },
+    ]
+  },
+  2: {
+    title: 'Test — Propulsión y Empuje',
+    questions: [
+      {
+        q: '¿Qué magnitud física mide el impulso específico (Isp)?',
+        opts: ['La fuerza máxima que produce el motor', 'La eficiencia del propelente (empuje por unidad de flujo másico)', 'La velocidad de salida de los gases', 'El tiempo total de combustión'],
+        ans: 1,
+        hint: 'Isp = F / (ṁ · g₀). Se mide en segundos. Un Isp mayor significa que el motor obtiene más empuje por cada kg/s de propelente quemado.'
+      },
+      {
+        q: 'En el vacío (Pa = 0), comparado con el nivel del mar, el empuje total de un motor...',
+        opts: ['Disminuye porque hay menos resistencia', 'Permanece exactamente igual', 'Aumenta porque el término (Pe−Pa)·Ae suma más', 'Depende solo del flujo másico'],
+        ans: 2,
+        hint: 'F = ṁ·Ve + (Pe−Pa)·Ae. En vacío Pa = 0, por lo que (Pe−Pa)·Ae = Pe·Ae > 0. En superficie, si Pe > Pa el término suma, pero menos que en vacío.'
+      },
+      {
+        q: 'Dos motores con el mismo empuje y flujo másico, pero Isp₁ = 290 s e Isp₂ = 450 s. Para lograr el mismo Δv, ¿cuál necesita menos propelente?',
+        opts: ['El de Isp = 290 s', 'El de Isp = 450 s', 'Necesitan la misma cantidad', 'Depende de la masa del cohete'],
+        ans: 1,
+        hint: 'De Tsiolkovsky: mf = m₀ · e^(−Δv / (Isp·g₀)). Mayor Isp → menor exponente → mayor mf (más masa seca sobra) → menos propelente consumido.'
+      },
+    ]
+  },
+  3: {
+    title: 'Test — Ecuación del Cohete',
+    questions: [
+      {
+        q: 'En la ecuación Δv = Isp · g₀ · ln(m₀/mf), ¿qué representa mf?',
+        opts: ['La masa del propelente', 'La masa inicial con todo el propelente', 'La masa final del cohete (seca, sin propelente)', 'La fracción de masa quemada'],
+        ans: 2,
+        hint: 'mf es la "masa final" — lo que queda del cohete cuando se ha quemado todo el propelente: estructura + motor + carga útil. m₀ es la masa inicial (húmeda, con propelente).'
+      },
+      {
+        q: 'Si un cohete no tiene propelente (m₀ = mf), su Δv disponible es...',
+        opts: ['Isp · g₀ (el máximo teórico)', '1 m/s (mínimo)', '0 m/s, porque ln(1) = 0', 'Infinito si el Isp es muy alto'],
+        ans: 2,
+        hint: 'Δv = Isp·g₀·ln(m₀/mf). Si m₀ = mf, la relación de masa = 1 y ln(1) = 0. Sin propelente, no hay impulso posible.'
+      },
+      {
+        q: '¿Por qué los cohetes para órbita usan múltiples etapas en lugar de una sola grande?',
+        opts: ['Por razones de seguridad únicamente', 'Porque los motores no duran tanto tiempo encendidos', 'Para deshacerse de la masa muerta (tanques vacíos) y mejorar la relación de masa efectiva', 'Para aumentar el Isp en cada etapa'],
+        ans: 2,
+        hint: 'Al soltar la primera etapa (tanques + motor vacíos), el cohete reduce su masa seca enormemente. La segunda etapa parte de una relación de masa mucho mejor. El resultado neto en Δv supera a una sola etapa equivalente.'
+      },
+    ]
+  },
+  4: {
+    title: 'Test — Aerodinámica y Mach',
+    questions: [
+      {
+        q: 'Al cruzar Mach 1, ¿qué le ocurre al coeficiente de arrastre Cd?',
+        opts: ['Cae a cero momentáneamente', 'Aumenta bruscamente — pico transónico', 'Permanece constante', 'Desaparece porque ya no hay atmósfera'],
+        ans: 1,
+        hint: 'Al pasar por el régimen transónico (Ma ≈ 0.8–1.2) se forman ondas de choque locales que incrementan drásticamente el arrastre. Esto se llamaba popularmente "barrera del sonido".'
+      },
+      {
+        q: 'La velocidad del sonido a(h) = √(γ·R·T). ¿Qué variable atmosférica la determina principalmente?',
+        opts: ['La presión atmosférica P', 'La densidad del aire ρ', 'La temperatura del aire T', 'La altitud h directamente'],
+        ans: 2,
+        hint: 'a = √(γ·R·T). Solo depende de T (temperatura local). A mayor temperatura, mayor velocidad del sonido. Por eso en la troposfera el sonido es más rápido abajo que arriba.'
+      },
+      {
+        q: 'A 11 km de altitud, la densidad del aire es ~⅓ de la del nivel del mar. Un cohete a esa altitud con la misma velocidad tendrá un arrastre...',
+        opts: ['Tres veces mayor (más área de impacto)', 'Exactamente igual (misma velocidad)', 'Aproximadamente un tercio del arrastre en superficie', '¼ del arrastre (densidad cuadrada)'],
+        ans: 2,
+        hint: 'D = ½ρv²CdA. Si ρ se reduce a ⅓ y v, Cd, A son iguales, entonces D se reduce a ⅓. La densidad aparece en primer grado (no cuadrado) en la ecuación de arrastre.'
+      },
+    ]
+  },
+  5: {
+    title: 'Test — Atmósfera ISA',
+    questions: [
+      {
+        q: 'En la troposfera (0–11 km), la temperatura del aire con la altitud...',
+        opts: ['Aumenta a razón de +6.5 K/km', 'Disminuye a razón de −6.5 K/km', 'Permanece constante en 288.15 K', 'Varía aleatoriamente'],
+        ans: 1,
+        hint: 'El gradiente de temperatura en la troposfera es L = −0.0065 K/m = −6.5 K/km. Por eso hace más frío en la montaña que en el valle. Este gradiente viene del equilibrio hidrostático con convección.'
+      },
+      {
+        q: '¿Por qué la presión atmosférica cae más rápidamente que la temperatura al aumentar la altitud?',
+        opts: ['Porque la presión depende exponencialmente de la densidad integrada por encima', 'Porque el viento dispersa las moléculas más rápido', 'Porque la temperatura controla la presión directamente', 'En realidad caen a la misma tasa'],
+        ans: 0,
+        hint: 'P(h) = ∫ ρ·g·dh desde h hasta ∞. La presión es el "peso de la columna de aire por encima". Como la densidad cae con la altitud, la presión cae más rápido que T.'
+      },
+      {
+        q: 'Usamos la ISA para calcular el arrastre en simulaciones. ¿Qué significa que la ISA sea un "modelo de referencia" y no una medición real?',
+        opts: ['Que sus valores son siempre incorrectos', 'Que da valores promedio idealizados; la atmósfera real varía con tiempo, lugar y estación', 'Que solo es válida para altitudes menores de 11 km', 'Que fue medida hace más de 100 años y está obsoleta'],
+        ans: 1,
+        hint: 'La ISA es un modelo estadístico de referencia. La atmósfera real varía con la latitud, la estación, la hora del día y las condiciones meteorológicas. Los ingenieros usan la ISA para que todos calculen bajo las mismas condiciones base.'
+      },
+    ]
+  },
+};
+
+/* ═══════════════════════════════════════════════════════
+   PROGRESS MANAGER
+═══════════════════════════════════════════════════════ */
+const KEY = 'deltav_progress_v1';
+const TOTAL = 18;
+
+const Progress = {
+  data: null,
+
+  load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      this.data = raw ? JSON.parse(raw) : null;
+    } catch(e) { this.data = null; }
+    if (!this.data) {
+      this.data = { unlocked: [1], completed: [] };
+    }
+    // ensure module 1 always unlocked
+    if (!this.data.unlocked.includes(1)) this.data.unlocked.push(1);
+  },
+
+  save() { localStorage.setItem(KEY, JSON.stringify(this.data)); },
+
+  isUnlocked(n) { return this.data.unlocked.includes(n); },
+
+  isCompleted(n) { return this.data.completed.includes(n); },
+
+  complete(n) {
+    if (!this.isCompleted(n)) this.data.completed.push(n);
+    const next = n + 1;
+    if (next <= TOTAL && !this.isUnlocked(next)) this.data.unlocked.push(next);
+    this.save();
+    this.updateUI();
+    this.scrollToNext(n);
+  },
+
+  updateUI() {
+    const done = this.data.completed.length;
+    const pct  = done / TOTAL * 100;
+    document.getElementById('prog-fill').style.width = pct + '%';
+    document.getElementById('prog-pct').textContent  = done + ' / ' + TOTAL;
+
+    for (let n = 1; n <= 5; n++) {
+      const item = document.querySelector(`[data-mod="${n}"]`);
+      const icon = document.getElementById('ni' + n);
+      const lock = document.getElementById('lock' + n);
+
+      if (this.isCompleted(n)) {
+        item?.classList.remove('nav-locked', 'nav-active');
+        item?.classList.add('nav-done');
+        if (icon) icon.textContent = '✓';
+        lock?.classList.add('hidden');
+      } else if (this.isUnlocked(n)) {
+        item?.classList.remove('nav-locked');
+        if (icon) icon.textContent = '○';
+        lock?.classList.add('hidden');
+      } else {
+        item?.classList.add('nav-locked');
+        if (icon) icon.textContent = '🔒';
+        if (lock) lock.classList.remove('hidden');
+      }
+    }
+  },
+
+  scrollToNext(n) {
+    const next = n + 1;
+    const el = document.getElementById('mod' + next);
+    if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 600);
+  }
+};
+
+/* ═══════════════════════════════════════════════════════
+   QUIZ RENDERER
+═══════════════════════════════════════════════════════ */
+const quizState = {}; // n → { answered: Set, correct: Set }
+
+function renderQuiz(n) {
+  const section = document.getElementById('quiz' + n);
+  if (!section) return;
+  const data = QUIZ_DATA[n];
+  if (!data) return;
+
+  if (Progress.isCompleted(n)) {
+    section.innerHTML = `
+      <div class="quiz-section">
+        <div class="quiz-complete show">
+          <div class="qc-icon">✅</div>
+          <div class="qc-title">Módulo ${n} completado</div>
+          <div class="qc-msg">Has respondido correctamente todas las preguntas. ¡Sigue adelante!</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  quizState[n] = { answered: new Set(), correct: new Set() };
+
+  let html = `
+    <div class="quiz-header">
+      <h3>${data.title}</h3>
+      <span class="quiz-badge">3 preguntas</span>
+      <span class="quiz-progress" id="qprog${n}">0 / 3 correctas</span>
+    </div>`;
+
+  data.questions.forEach((q, qi) => {
+    html += `
+      <div class="q-card" id="qcard${n}_${qi}">
+        <div class="q-text">${qi + 1}. ${q.q}</div>
+        <div class="q-opts">`;
+    q.opts.forEach((opt, oi) => {
+      html += `<button class="q-opt" onclick="checkAnswer(${n},${qi},${oi})" id="qopt${n}_${qi}_${oi}">${opt}</button>`;
+    });
+    html += `</div>
+        <div class="q-hint" id="qhint${n}_${qi}">${q.hint}</div>
+      </div>`;
+  });
+
+  html += `<div class="quiz-complete" id="qcomplete${n}">
+    <div class="qc-icon">🎉</div>
+    <div class="qc-title">¡Módulo ${n} superado!</div>
+    <div class="qc-msg">Excelente trabajo. El siguiente módulo ha sido desbloqueado.</div>
+    ${n < 5 ? `<button class="btn-next" onclick="goNext(${n})">Siguiente módulo →</button>` : ''}
+  </div>`;
+
+  section.innerHTML = html;
+}
+
+function checkAnswer(n, qi, oi) {
+  const data = QUIZ_DATA[n];
+  const q    = data.questions[qi];
+  const st   = quizState[n];
+  if (st.answered.has(qi)) return; // already answered correctly
+
+  const card  = document.getElementById(`qcard${n}_${qi}`);
+  const hint  = document.getElementById(`qhint${n}_${qi}`);
+  const optEl = document.getElementById(`qopt${n}_${qi}_${oi}`);
+  const correct = oi === q.ans;
+
+  // disable all options for this question
+  for (let i = 0; i < q.opts.length; i++) {
+    const btn = document.getElementById(`qopt${n}_${qi}_${i}`);
+    if (btn) btn.disabled = true;
+  }
+
+  if (correct) {
+    optEl.classList.add('opt-correct');
+    card.classList.add('q-correct');
+    st.answered.add(qi);
+    st.correct.add(qi);
+    // update progress counter
+    const prog = document.getElementById('qprog' + n);
+    if (prog) prog.textContent = st.correct.size + ' / 3 correctas';
+
+    if (st.correct.size === 3) {
+      // all correct
+      Progress.complete(n);
+      const comp = document.getElementById('qcomplete' + n);
+      if (comp) comp.classList.add('show');
+    }
+  } else {
+    optEl.classList.add('opt-wrong');
+    card.classList.add('q-wrong');
+    hint.classList.add('show');
+    // re-enable after showing hint (allow retry after short delay)
+    setTimeout(() => {
+      card.classList.remove('q-wrong');
+      for (let i = 0; i < q.opts.length; i++) {
+        const btn = document.getElementById(`qopt${n}_${qi}_${i}`);
+        if (btn && !st.answered.has(qi)) {
+          btn.disabled = false;
+          btn.classList.remove('opt-wrong', 'opt-correct');
+        }
+      }
+    }, 1500);
+  }
+}
+
+function goNext(n) {
+  const next = document.getElementById('mod' + (n + 1));
+  if (next) next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ═══════════════════════════════════════════════════════
+   SIDEBAR ACTIVE STATE ON SCROLL
+═══════════════════════════════════════════════════════ */
+function updateActiveNav() {
+  const scrollY = window.scrollY + window.innerHeight * 0.4;
+  for (let n = 1; n <= 5; n++) {
+    const el = document.getElementById('mod' + n);
+    const nav = document.querySelector(`[data-mod="${n}"]`);
+    if (!el || !nav) continue;
+    const top = el.offsetTop, bot = top + el.offsetHeight;
+    if (scrollY >= top && scrollY < bot) {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('nav-active'));
+      if (!nav.classList.contains('nav-locked')) nav.classList.add('nav-active');
+    }
+  }
+}
+window.addEventListener('scroll', updateActiveNav, { passive: true });
+
+/* ═══════════════════════════════════════════════════════
+   STARS
+═══════════════════════════════════════════════════════ */
+(function() {
+  const cv  = document.getElementById('c-stars');
+  const ctx = cv.getContext('2d');
+  let W, H, stars = [];
+
+  function resize() {
+    W = cv.width  = window.innerWidth;
+    H = cv.height = window.innerHeight;
+  }
+
+  function makeStars() {
+    stars = [];
+    for (let i = 0; i < 220; i++) {
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 1.3 + 0.2,
+        a: Math.random(),
+        da: (Math.random() - 0.5) * 0.004,
+        layer: Math.floor(Math.random() * 3) + 1,
+      });
+    }
+  }
+
+  let scrollY = 0;
+  window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
+
+  function tick() {
+    ctx.clearRect(0, 0, W, H);
+    stars.forEach(s => {
+      s.a += s.da;
+      if (s.a < 0.05) s.da =  Math.abs(s.da);
+      if (s.a > 1.0)  s.da = -Math.abs(s.da);
+      const py = ((s.y - scrollY * 0.015 * s.layer) % H + H) % H;
+      ctx.beginPath();
+      ctx.arc(s.x, py, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${(s.a * 0.65).toFixed(2)})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('resize', () => { resize(); makeStars(); });
+  resize(); makeStars(); tick();
+})();
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE SIDEBAR
+═══════════════════════════════════════════════════════ */
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('mobile-overlay').classList.toggle('show');
+}
+document.getElementById('mobile-overlay').addEventListener('click', toggleSidebar);
+
+/* ═══════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', () => {
+  Progress.load();
+  Progress.updateUI();
+
+  // render quizzes for unlocked modules
+  for (let n = 1; n <= 5; n++) {
+    if (Progress.isUnlocked(n)) renderQuiz(n);
+  }
+
+  // init demos
+  demo1();
+  demo2();
+  demo3();
+  drawDemo4();
+  demo5();
+
+  // draw canvas demos on resize
+  window.addEventListener('resize', () => {
+    demo1();
+    drawDemo4();
+    demo5();
+    drawISACanvas(+document.getElementById('d5-h').value);
+  });
+});
+
+// Re-render quiz when a module is unlocked (after progress.complete calls updateUI)
+const _origUpdateUI = Progress.updateUI.bind(Progress);
+Progress.updateUI = function() {
+  _origUpdateUI();
+  for (let n = 1; n <= 5; n++) {
+    if (this.isUnlocked(n)) {
+      const qs = document.getElementById('quiz' + n);
+      if (qs && qs.innerHTML.trim() === '') renderQuiz(n);
+    }
+  }
+};
+</script>
+</body>
+</html>
