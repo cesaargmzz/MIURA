@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Física del MIURA 1 — Curso Interactivo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #05070f;
+  --surface: #0d1117;
+  --surface2: #161b22;
+  --surface3: #21262d;
+  --border: #30363d;
+  --accent: #f97316;
+  --accent2: #3b82f6;
+  --accent3: #10b981;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --text3: #6e7681;
+  --sidebar-w: 260px;
+  --header-h: 0px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  font-size:16px;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+
+/* ── STARS ── */
+#stars-canvas{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:0;
+}
+
+/* ── SIDEBAR ── */
+#sidebar{
+  position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;
+  background:rgba(13,17,23,0.95);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  z-index:100;
+  backdrop-filter:blur(12px);
+  overflow:hidden;
+}
+#sidebar-header{
+  padding:20px 16px 12px;
+  border-bottom:1px solid var(--border);
+}
+#sidebar-header .logo{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:13px;font-weight:700;
+  color:var(--accent);
+  letter-spacing:0.15em;text-transform:uppercase;
+  margin-bottom:4px;
+}
+#sidebar-header h2{
+  font-size:14px;font-weight:600;color:var(--text);
+  line-height:1.3;
+}
+#progress-bar-wrap{
+  padding:10px 16px 0;
+}
+#progress-label{
+  font-size:11px;color:var(--text3);margin-bottom:4px;
+  display:flex;justify-content:space-between;
+}
+#progress-track{
+  height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;
+}
+#progress-fill{
+  height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));
+  border-radius:2px;transition:width 0.3s ease;
+}
+#nav-list{
+  flex:1;overflow-y:auto;padding:8px 8px;
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+}
+#nav-list::-webkit-scrollbar{width:4px}
+#nav-list::-webkit-scrollbar-track{background:transparent}
+#nav-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 10px;border-radius:6px;cursor:pointer;
+  font-size:12.5px;color:var(--text2);
+  transition:all 0.15s;margin-bottom:1px;
+  text-decoration:none;
+}
+.nav-item:hover{background:var(--surface3);color:var(--text)}
+.nav-item.active{background:rgba(249,115,22,0.12);color:var(--accent)}
+.nav-item .num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;color:var(--text3);
+  min-width:22px;
+}
+.nav-item.active .num{color:var(--accent)}
+.nav-check{
+  margin-left:auto;width:14px;height:14px;border-radius:50%;
+  border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all 0.2s;
+}
+.nav-item.done .nav-check{
+  background:var(--accent3);border-color:var(--accent3);
+}
+.nav-item.done .nav-check::after{
+  content:'✓';font-size:8px;color:#000;font-weight:700;
+}
+
+/* ── MAIN ── */
+#main{
+  margin-left:var(--sidebar-w);
+  min-height:100vh;
+  position:relative;z-index:1;
+}
+
+/* ── HERO ── */
+#hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:60px 40px;
+  position:relative;
+}
+#hero .badge{
+  font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--accent);background:rgba(249,115,22,0.1);
+  border:1px solid rgba(249,115,22,0.3);
+  padding:4px 14px;border-radius:20px;margin-bottom:24px;
+}
+#hero h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(2.4rem,5vw,4rem);
+  font-weight:700;line-height:1.1;
+  background:linear-gradient(135deg,#fff 0%,#f97316 50%,#3b82f6 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;margin-bottom:16px;
+}
+#hero p{
+  max-width:560px;color:var(--text2);font-size:1.05rem;
+  margin-bottom:32px;
+}
+#hero .stats-row{
+  display:flex;gap:32px;justify-content:center;flex-wrap:wrap;
+  margin-bottom:40px;
+}
+.stat-box{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:16px 20px;text-align:center;
+  min-width:110px;
+}
+.stat-box .val{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.5rem;font-weight:700;color:var(--accent);
+}
+.stat-box .lbl{font-size:11px;color:var(--text3);margin-top:2px}
+.btn-start{
+  background:linear-gradient(135deg,var(--accent),#ea580c);
+  color:#fff;font-weight:600;font-size:0.95rem;
+  padding:12px 28px;border-radius:8px;border:none;cursor:pointer;
+  text-decoration:none;display:inline-block;
+  transition:transform 0.15s,opacity 0.15s;
+  box-shadow:0 4px 20px rgba(249,115,22,0.35);
+}
+.btn-start:hover{transform:translateY(-2px);opacity:0.9}
+
+/* ── SECTIONS ── */
+.module{
+  max-width:800px;margin:0 auto;
+  padding:80px 40px;
+  border-bottom:1px solid var(--border);
+}
+.module:last-child{border-bottom:none}
+.module-tag{
+  font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--accent2);margin-bottom:8px;
+  font-family:'JetBrains Mono',monospace;
+}
+.module h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(1.5rem,3vw,2rem);font-weight:700;
+  color:var(--text);margin-bottom:20px;
+  line-height:1.2;
+}
+.module p{color:var(--text2);margin-bottom:14px}
+.module h3{
+  font-size:1.05rem;font-weight:600;color:var(--text);
+  margin:28px 0 10px;
+}
+
+/* ── EQUATION ── */
+.eq-box{
+  background:var(--surface2);border:1px solid var(--border);
+  border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;
+  padding:16px 20px;margin:20px 0;
+  font-family:'JetBrains Mono',monospace;
+  font-size:1.1rem;color:var(--text);
+  overflow-x:auto;
+}
+.eq-box .eq-label{
+  font-size:11px;color:var(--text3);
+  margin-bottom:6px;font-family:'Inter',sans-serif;
+  text-transform:uppercase;letter-spacing:0.08em;
+}
+.eq-main{font-size:1.15rem;color:#fff}
+.eq-sub{font-size:0.8rem;color:var(--text2);margin-top:6px}
+sup{font-size:0.65em;vertical-align:super}
+sub{font-size:0.65em;vertical-align:sub}
+
+/* ── DEMO BOX ── */
+.demo-box{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:12px;margin-top:28px;overflow:hidden;
+}
+.demo-header{
+  background:var(--surface3);
+  padding:10px 18px;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--border);
+  font-size:12px;font-weight:600;color:var(--text2);
+  text-transform:uppercase;letter-spacing:0.1em;
+}
+.demo-header .dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent);
+}
+.demo-body{padding:20px}
+
+/* ── SLIDERS ── */
+.slider-row{
+  display:flex;align-items:center;gap:12px;margin-bottom:12px;
+}
+.slider-row label{
+  font-size:12px;color:var(--text2);min-width:140px;
+  font-family:'JetBrains Mono',monospace;
+}
+.slider-row input[type=range]{
+  flex:1;
+  -webkit-appearance:none;
+  height:4px;background:var(--surface3);
+  border-radius:2px;outline:none;cursor:pointer;
+}
+.slider-row input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:14px;height:14px;
+  border-radius:50%;background:var(--accent);cursor:pointer;
+  box-shadow:0 0 6px rgba(249,115,22,0.5);
+}
+.slider-row .val-display{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;color:var(--accent);
+  min-width:90px;text-align:right;
+}
+
+/* ── RESULT DISPLAY ── */
+.result-display{
+  background:var(--surface3);border-radius:8px;
+  padding:14px 18px;margin-top:10px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.result-display .r-label{font-size:12px;color:var(--text3)}
+.result-display .r-val{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.6rem;font-weight:700;color:var(--accent);
+}
+.result-display .r-unit{font-size:13px;color:var(--text2)}
+
+/* ── CANVAS ── */
+canvas.demo-canvas{
+  width:100%;max-height:260px;
+  border-radius:6px;display:block;
+}
+
+/* ── FSM ── */
+.fsm-grid{
+  display:flex;flex-wrap:wrap;gap:8px;
+  justify-content:center;margin-bottom:16px;
+}
+.fsm-state{
+  padding:8px 14px;border-radius:6px;cursor:pointer;
+  font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace;
+  border:1.5px solid var(--border);
+  color:var(--text2);background:var(--surface3);
+  transition:all 0.2s;
+}
+.fsm-state:hover{border-color:var(--accent2);color:var(--text)}
+.fsm-state.active-state{
+  background:rgba(249,115,22,0.15);
+  border-color:var(--accent);color:var(--accent);
+}
+.fsm-info{
+  background:var(--surface3);border-radius:8px;
+  padding:14px 18px;min-height:80px;
+  font-size:13.5px;color:var(--text2);
+  line-height:1.6;
+}
+.fsm-info strong{color:var(--text)}
+
+/* ── INFO CARDS ── */
+.cards-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:12px;margin:16px 0;
+}
+.info-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:14px;
+}
+.info-card .ic-label{
+  font-size:11px;color:var(--text3);text-transform:uppercase;
+  letter-spacing:0.08em;margin-bottom:6px;
+}
+.info-card .ic-val{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.2rem;font-weight:700;color:var(--accent2);
+}
+.info-card .ic-desc{font-size:12px;color:var(--text3);margin-top:4px}
+
+/* ── DV BAR ── */
+.dv-bar-wrap{margin-top:14px}
+.dv-bar-track{
+  height:28px;background:var(--surface3);
+  border-radius:6px;overflow:hidden;position:relative;
+}
+.dv-bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  border-radius:6px;transition:width 0.4s ease;
+  display:flex;align-items:center;padding-left:10px;
+  font-size:12px;font-weight:600;color:#fff;white-space:nowrap;
+  overflow:hidden;
+}
+.dv-target-line{
+  position:absolute;top:0;height:100%;width:2px;
+  background:var(--accent3);
+}
+.dv-label-row{
+  display:flex;justify-content:space-between;
+  font-size:11px;color:var(--text3);margin-top:4px;
+}
+
+/* ── ATMOSPHERE CHART ── */
+.atm-display{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:10px;margin-top:12px;
+}
+.atm-card{
+  background:var(--surface3);border-radius:8px;
+  padding:12px;text-align:center;
+}
+.atm-card .ac-label{font-size:11px;color:var(--text3);margin-bottom:4px}
+.atm-card .ac-val{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.1rem;font-weight:700;
+}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}
+th{
+  text-align:left;padding:8px 12px;
+  background:var(--surface3);color:var(--text2);
+  font-weight:600;font-size:11px;text-transform:uppercase;
+  letter-spacing:0.06em;border-bottom:1px solid var(--border);
+}
+td{
+  padding:9px 12px;border-bottom:1px solid rgba(48,54,61,0.5);
+  color:var(--text2);
+}
+tr:hover td{background:rgba(22,27,34,0.5)}
+td:first-child{color:var(--text);font-weight:500}
+
+/* ── HIGHLIGHT ── */
+.highlight{
+  background:rgba(249,115,22,0.08);
+  border:1px solid rgba(249,115,22,0.2);
+  border-radius:6px;padding:12px 16px;margin:14px 0;
+  font-size:13.5px;color:var(--text2);
+}
+.highlight strong{color:var(--accent)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  :root{--sidebar-w:0px}
+  #sidebar{
+    transform:translateX(-260px);
+    transition:transform 0.3s ease;
+    width:260px;
+  }
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0}
+  #menu-btn{display:flex}
+  .module{padding:60px 20px}
+  #hero{padding:60px 20px}
+  .atm-display{grid-template-columns:1fr}
+  .slider-row{flex-wrap:wrap}
+  .slider-row label{min-width:100%}
+}
+#menu-btn{
+  display:none;
+  position:fixed;bottom:24px;right:24px;
+  width:48px;height:48px;border-radius:50%;
+  background:var(--accent);border:none;cursor:pointer;
+  align-items:center;justify-content:center;
+  z-index:200;box-shadow:0 4px 16px rgba(249,115,22,0.4);
+  font-size:20px;color:#fff;
+}
+.overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);
+  z-index:99;
+}
+.overlay.show{display:block}
+</style>
+</head>
+<body>
+
+<canvas id="stars-canvas"></canvas>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo">PLD Space</div>
+    <h2>Física del MIURA 1</h2>
+  </div>
+  <div id="progress-bar-wrap">
+    <div id="progress-label">
+      <span>Progreso</span>
+      <span id="pct-text">0%</span>
+    </div>
+    <div id="progress-track"><div id="progress-fill"></div></div>
+  </div>
+  <div id="nav-list">
+    <a class="nav-item" href="#mod0"><span class="num">00</span>Introducción<span class="nav-check"></span></a>
+    <a class="nav-item" href="#mod1"><span class="num">01</span>Las 4 fuerzas<span class="nav-check"></span></a>
+    <a class="nav-item" href="#mod2"><span class="num">02</span>Propulsión<span class="nav-check"></span></a>
+    <a class="nav-item" href="#mod3"><span class="num">03</span>Ec. del Cohete<span class="nav-check"></span></a>
+    <a class="nav-item" href="#mod4"><span class="num">04</span>Aerodinámica<span class="nav-check"></span></a>
+    <a class="nav-item" href="#mod5"><span class="num">05</span>Atmósfera ISA<span class="nav-check"></span></a>
+    <a class="nav-item" href="#mod6"><span class="num">06</span>Gravedad<span class="nav-check"></span></a>
+    <a class="nav-item" href="#mod7"><span class="num">07</span>Integración numérica<span class="nav-check"></span></a>
+    <a class="nav-item" href="#mod8"><span class="num">08</span>Método RK4<span class="nav-check"></span></a>
+    <a class="nav-item" href="#mod9"><span class="num">09</span>FSM<span class="nav-check"></span></a>
+    <a class="nav-item" href="#mod10"><span class="num">10</span>Telemetría & Max-Q<span class="nav-check"></span></a>
+  </div>
+</nav>
+
+<div class="overlay" id="overlay"></div>
+<button id="menu-btn" onclick="toggleSidebar()">☰</button>
+
+<!-- MAIN -->
+<main id="main">
+
+<!-- HERO -->
+<section id="hero">
+  <div class="badge">Curso Interactivo · PLD Space · MIURA 1</div>
+  <h1>Física de un<br>Cohete Real</h1>
+  <p>Las matemáticas, la aerodinámica y la ingeniería detrás del primer cohete privado español — explicadas con demos interactivas y valores reales.</p>
+  <div class="stats-row">
+    <div class="stat-box"><div class="val">150 km</div><div class="lbl">Apogeo objetivo</div></div>
+    <div class="stat-box"><div class="val">3 500 kg</div><div class="lbl">Masa total</div></div>
+    <div class="stat-box"><div class="val">30 kN</div><div class="lbl">Empuje TEPREL-1B</div></div>
+    <div class="stat-box"><div class="val">11</div><div class="lbl">Módulos</div></div>
+  </div>
+  <a href="#mod0" class="btn-start">Comenzar el curso →</a>
+</section>
+
+<!-- ═══════════ MÓDULO 0 ═══════════ -->
+<section class="module" id="mod0">
+  <div class="module-tag">Módulo 00</div>
+  <h2>Introducción al MIURA 1</h2>
+  <p>El <strong style="color:var(--text)">MIURA 1</strong> es el primer cohete de sondeo de propulsión líquida desarrollado íntegramente por una empresa privada española. Construido por <strong style="color:var(--text)">PLD Space</strong> en Elche, Alicante, realizó su vuelo inaugural el <strong style="color:var(--text)">7 de octubre de 2023</strong> desde El Arenosillo, Huelva.</p>
+  <p>Es un banco de pruebas para el MIURA 5, un lanzador orbital en desarrollo. El programa sirve para validar el motor TEPREL-1B, los sistemas de guiado y los procedimientos de lanzamiento en condiciones reales.</p>
+
+  <div class="cards-grid">
+    <div class="info-card">
+      <div class="ic-label">Motor</div>
+      <div class="ic-val">TEPREL-1B</div>
+      <div class="ic-desc">LOX / Etanol</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-label">Empuje (nivel del mar)</div>
+      <div class="ic-val">30 000 N</div>
+      <div class="ic-desc">~3 toneladas-fuerza</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-label">Masa total</div>
+      <div class="ic-val">3 500 kg</div>
+      <div class="ic-desc">1 000 seca + 2 500 propelente</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-label">Diámetro</div>
+      <div class="ic-val">700 mm</div>
+      <div class="ic-desc">Sección transversal: 0.385 m²</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-label">Isp (vacío)</div>
+      <div class="ic-val">290 s</div>
+      <div class="ic-desc">Impulso específico</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-label">Apogeo objetivo</div>
+      <div class="ic-val">~150 km</div>
+      <div class="ic-desc">Línea de Kármán + margen</div>
+    </div>
+  </div>
+
+  <h3>Cómo leer este curso</h3>
+  <p>Usamos el <strong style="color:var(--text)">Sistema Internacional (SI)</strong> en todo momento: metros [m], kilogramos [kg], segundos [s], newtons [N], pascales [Pa]. Las ecuaciones aparecen en cajas con la notación estándar de mecánica de vuelo. Los valores predeterminados de cada demo corresponden a datos reales del MIURA 1.</p>
+  <div class="highlight">
+    <strong>Notación:</strong> ρ = densidad del aire, v = velocidad, h = altitud, m = masa, g = gravedad, F = fuerza, Cd = coeficiente de arrastre, A = área de referencia, Isp = impulso específico.
+  </div>
+</section>
+
+<!-- ═══════════ MÓDULO 1 ═══════════ -->
+<section class="module" id="mod1">
+  <div class="module-tag">Módulo 01</div>
+  <h2>Las 4 Fuerzas del Vuelo</h2>
+  <p>Todo cuerpo en movimiento por la atmósfera experimenta cuatro fuerzas fundamentales. En un cohete suborbital como el MIURA 1, estas determinan cada metro de la trayectoria.</p>
+
+  <div class="cards-grid">
+    <div class="info-card">
+      <div class="ic-label" style="color:#f97316">↑ Empuje (T)</div>
+      <div class="ic-val" style="color:#f97316">Thrust</div>
+      <div class="ic-desc">Generado por el motor al expulsar gases a alta velocidad. Actúa en la dirección del eje del cohete.</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-label" style="color:#ef4444">↓ Peso (W)</div>
+      <div class="ic-val" style="color:#ef4444">Weight</div>
+      <div class="ic-desc">W = m·g(h). Varía con la altitud y disminuye al quemar propelente.</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-label" style="color:#3b82f6">← Arrastre (D)</div>
+      <div class="ic-val" style="color:#3b82f6">Drag</div>
+      <div class="ic-desc">D = ½ρv²CdA. La resistencia aerodinámica siempre opuesta al movimiento.</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-label" style="color:#10b981">⊥ Sustentación (L)</div>
+      <div class="ic-val" style="color:#10b981">Lift</div>
+      <div class="ic-desc">Perpendicular al movimiento. En cohetes verticales es casi nula — el estabilizador aerodinámico la mantiene en cero.</div>
+    </div>
+  </div>
+
+  <h3>Segunda Ley de Newton aplicada</h3>
+  <div class="eq-box">
+    <div class="eq-label">Aceleración neta (ascenso vertical)</div>
+    <div class="eq-main">a = (T − D − W) / m</div>
+    <div class="eq-sub">donde W = m·g(h) y D = ½·ρ·v²·Cd·A</div>
+  </div>
+
+  <div class="demo-box">
+    <div class="demo-header"><div class="dot"></div>DEMO — Diagrama de Cuerpo Libre</div>
+    <div class="demo-body">
+      <div class="slider-row">
+        <label>Empuje T [N]</label>
+        <input type="range" id="s1-thrust" min="0" max="60000" value="30000" step="500" oninput="updateFBD()">
+        <span class="val-display" id="d1-thrust">30 000 N</span>
+      </div>
+      <div class="slider-row">
+        <label>Masa m [kg]</label>
+        <input type="range" id="s1-mass" min="500" max="3500" value="2500" step="50" oninput="updateFBD()">
+        <span class="val-display" id="d1-mass">2 500 kg</span>
+      </div>
+      <div class="slider-row">
+        <label>Velocidad v [m/s]</label>
+        <input type="range" id="s1-vel" min="0" max="2000" value="200" step="10" oninput="updateFBD()">
+        <span class="val-display" id="d1-vel">200 m/s</span>
+      </div>
+      <div class="slider-row">
+        <label>Altitud h [km]</label>
+        <input type="range" id="s1-alt" min="0" max="150" value="10" step="1" oninput="updateFBD()">
+        <span class="val-display" id="d1-alt">10 km</span>
+      </div>
+      <canvas id="fbd-canvas" class="demo-canvas" height="240"></canvas>
+      <div class="result-display" id="fbd-result">
+        <div><div class="r-label">Aceleración neta</div><div><span class="r-val" id="fbd-acc">0.0</span> <span class="r-unit">m/s²</span></div></div>
+        <div><div class="r-label">Peso</div><div><span class="r-val" id="fbd-w" style="color:var(--accent2)">0</span> <span class="r-unit">N</span></div></div>
+        <div><div class="r-label">Arrastre</div><div><span class="r-val" id="fbd-d" style="color:#3b82f6">0</span> <span class="r-unit">N</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ MÓDULO 2 ═══════════ -->
+<section class="module" id="mod2">
+  <div class="module-tag">Módulo 02</div>
+  <h2>Propulsión y Empuje</h2>
+  <p>El <strong style="color:var(--text)">TEPREL-1B</strong> es un motor de propelente líquido bipropulsante que quema LOX (oxígeno líquido) y etanol. La combustión genera gases a alta temperatura que se expanden y aceleran en la tobera tipo De Laval.</p>
+
+  <h3>Ecuación de empuje completa</h3>
+  <div class="eq-box">
+    <div class="eq-label">Empuje total</div>
+    <div class="eq-main">F = ṁ·V<sub>e</sub> + (P<sub>e</sub> − P<sub>a</sub>)·A<sub>e</sub></div>
+    <div class="eq-sub">ṁ = flujo másico [kg/s] · Ve = velocidad de escape [m/s] · Pe = presión en la salida [Pa] · Pa = presión ambiente [Pa] · Ae = área de salida [m²]</div>
+  </div>
+
+  <p>El primer término <strong style="color:var(--text)">ṁ·Ve</strong> es el empuje por momento (siempre positivo). El segundo término <strong style="color:var(--text)">(Pe−Pa)·Ae</strong> es el empuje por presión: positivo en vacío (Pe > Pa), negativo a nivel del mar si la tobera está sobreexpandida.</p>
+
+  <h3>Impulso específico (Isp)</h3>
+  <div class="eq-box">
+    <div class="eq-label">Isp — eficiencia del propelente</div>
+    <div class="eq-main">Isp = F / (ṁ·g<sub>0</sub>) [s]</div>
+    <div class="eq-sub">A mayor Isp, más empuje por kg de propelente quemado. TEPREL-1B: Isp ≈ 290 s en vacío.</div>
+  </div>
+
+  <div class="demo-box">
+    <div class="demo-header"><div class="dot"></div>DEMO — Calculadora de Empuje TEPREL-1B</div>
+    <div class="demo-body">
+      <div class="slider-row">
+        <label>Flujo másico ṁ [kg/s]</label>
+        <input type="range" id="s2-mdot" min="1" max="30" value="10.5" step="0.1" oninput="updateThrust()">
+        <span class="val-display" id="d2-mdot">10.5 kg/s</span>
+      </div>
+      <div class="slider-row">
+        <label>Vel. escape Ve [m/s]</label>
+        <input type="range" id="s2-ve" min="1000" max="4000" value="2843" step="10" oninput="updateThrust()">
+        <span class="val-display" id="d2-ve">2 843 m/s</span>
+      </div>
+      <div class="slider-row">
+        <label>Pe − Pa [kPa]</label>
+        <input type="range" id="s2-dp" min="-50" max="200" value="0" step="1" oninput="updateThrust()">
+        <span class="val-display" id="d2-dp">0 kPa</span>
+      </div>
+      <div class="slider-row">
+        <label>Área salida Ae [cm²]</label>
+        <input type="range" id="s2-ae" min="10" max="500" value="80" step="1" oninput="updateThrust()">
+        <span class="val-display" id="d2-ae">80 cm²</span>
+      </div>
+      <div class="result-display">
+        <div><div class="r-label">Empuje total</div><div><span class="r-val" id="thrust-result">29 852</span> <span class="r-unit">N</span></div></div>
+        <div><div class="r-label">Isp calculado</div><div><span class="r-val" id="isp-result" style="color:var(--accent3)">290</span> <span class="r-unit">s</span></div></div>
+        <div><div class="r-label">Flujo másico</div><div><span class="r-val" id="mdot-result" style="color:var(--accent2)">10.5</span> <span class="r-unit">kg/s</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ MÓDULO 3 ═══════════ -->
+<section class="module" id="mod3">
+  <div class="module-tag">Módulo 03</div>
+  <h2>Ecuación del Cohete de Tsiolkovsky</h2>
+  <p>En 1903, Konstantín Tsiolkovsky derivó la ecuación fundamental de la propulsión coheteril: la relación entre la velocidad ganada, el impulso específico y la fracción de masa.</p>
+
+  <h3>Derivación intuitiva</h3>
+  <p>Cada pequeño incremento de velocidad dv requiere expulsar una masa dm de propelente a velocidad Ve. Aplicando conservación de momento a un cohete en el vacío e integrando desde m₀ hasta mf:</p>
+
+  <div class="eq-box">
+    <div class="eq-label">Ecuación de Tsiolkovsky</div>
+    <div class="eq-main">Δv = Isp · g<sub>0</sub> · ln(m<sub>0</sub> / m<sub>f</sub>)</div>
+    <div class="eq-sub">m₀ = masa inicial (húmeda) · mf = masa final (seca) · g₀ = 9.80665 m/s²</div>
+  </div>
+
+  <h3>El problema de la fracción másica</h3>
+  <p>La relación de masa R = m₀/mf entra en un <strong style="color:var(--text)">logaritmo</strong> — esto tiene implicaciones dramáticas. Para duplicar el Δv necesitas elevar R al cuadrado. El MIURA 1 tiene R = 3500/1000 = 3.5, lo que da ≈ 3 562 m/s en vacío.</p>
+
+  <div class="demo-box">
+    <div class="demo-header"><div class="dot"></div>DEMO — Calculadora Tsiolkovsky</div>
+    <div class="demo-body">
+      <div class="slider-row">
+        <label>Masa húmeda m₀ [kg]</label>
+        <input type="range" id="s3-m0" min="1500" max="6000" value="3500" step="50" oninput="updateTsiolkovsky()">
+        <span class="val-display" id="d3-m0">3 500 kg</span>
+      </div>
+      <div class="slider-row">
+        <label>Masa seca mf [kg]</label>
+        <input type="range" id="s3-mf" min="300" max="2000" value="1000" step="50" oninput="updateTsiolkovsky()">
+        <span class="val-display" id="d3-mf">1 000 kg</span>
+      </div>
+      <div class="slider-row">
+        <label>Isp [s]</label>
+        <input type="range" id="s3-isp" min="150" max="450" value="290" step="1" oninput="updateTsiolkovsky()">
+        <span class="val-display" id="d3-isp">290 s</span>
+      </div>
+      <div class="result-display">
+        <div><div class="r-label">Δv</div><div><span class="r-val" id="dv-result">3 562</span> <span class="r-unit">m/s</span></div></div>
+        <div><div class="r-label">Relación de masa</div><div><span class="r-val" id="mr-result" style="color:var(--accent3)">3.50</span></div></div>
+      </div>
+      <div class="dv-bar-wrap">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:6px">Δv relativo (referencia: LEO ≈ 9 400 m/s)</div>
+        <div class="dv-bar-track">
+          <div class="dv-bar-fill" id="dv-bar" style="width:37.9%">3 562 m/s</div>
+          <div class="dv-target-line" style="left:100%"></div>
+        </div>
+        <div class="dv-label-row"><span>0</span><span>LEO 9 400 m/s</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ MÓDULO 4 ═══════════ -->
+<section class="module" id="mod4">
+  <div class="module-tag">Módulo 04</div>
+  <h2>Aerodinámica</h2>
+  <p>A medida que el cohete acelera, la interacción con el aire se vuelve el factor dominante durante los primeros 50–80 km. El número de Mach gobierna el régimen aerodinámico.</p>
+
+  <h3>Número de Mach</h3>
+  <div class="eq-box">
+    <div class="eq-label">Número de Mach</div>
+    <div class="eq-main">Ma = v / a(h)</div>
+    <div class="eq-sub">a(h) = √(γ·R·T(h)) — velocidad del sonido local · γ = 1.4, R = 287 J/(kg·K)</div>
+  </div>
+
+  <table>
+    <tr><th>Régimen</th><th>Mach</th><th>Fenómenos</th></tr>
+    <tr><td>Subsónico</td><td>&lt; 0.8</td><td>Flujo adjunto, Cd relativamente bajo y estable</td></tr>
+    <tr><td>Transónico</td><td>0.8 – 1.2</td><td>Ondas de choque locales, pico de Cd ("barrera del sonido")</td></tr>
+    <tr><td>Supersónico</td><td>1.2 – 5</td><td>Onda de choque adjunta al morro, Cd cae con Mach</td></tr>
+    <tr><td>Hipersónico</td><td>&gt; 5</td><td>Efectos cinéticos y de ionización</td></tr>
+  </table>
+
+  <h3>Fuerza de arrastre</h3>
+  <div class="eq-box">
+    <div class="eq-label">Drag (arrastre aerodinámico)</div>
+    <div class="eq-main">D = ½ · ρ · v² · C<sub>d</sub>(Ma) · A</div>
+    <div class="eq-sub">ρ = densidad del aire · A = π·(d/2)² = 0.3848 m² (MIURA 1)</div>
+  </div>
+
+  <div class="demo-box">
+    <div class="demo-header"><div class="dot"></div>DEMO — Curva Cd vs Mach (MIURA 1)</div>
+    <div class="demo-body">
+      <canvas id="cd-canvas" class="demo-canvas" height="220"></canvas>
+      <div style="font-size:12px;color:var(--text3);margin-top:8px;text-align:center">
+        Mueve el cursor sobre la gráfica para ver Cd en cada punto de Mach
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ MÓDULO 5 ═══════════ -->
+<section class="module" id="mod5">
+  <div class="module-tag">Módulo 05</div>
+  <h2>Modelo de Atmósfera ISA</h2>
+  <p>La <strong style="color:var(--text)">Atmósfera Estándar Internacional (ISA)</strong> define cómo cambian temperatura, presión y densidad con la altitud. Sin este modelo no se puede calcular el arrastre ni la velocidad del sonido.</p>
+
+  <h3>Capas atmosféricas</h3>
+  <table>
+    <tr><th>Capa</th><th>Rango [km]</th><th>Gradiente [K/km]</th></tr>
+    <tr><td>Troposfera</td><td>0 – 11</td><td>−6.5</td></tr>
+    <tr><td>Estratosfera baja</td><td>11 – 20</td><td>0 (isoterma)</td></tr>
+    <tr><td>Estratosfera alta</td><td>20 – 32</td><td>+1.0</td></tr>
+    <tr><td>Estratosfera sup.</td><td>32 – 47</td><td>+2.8</td></tr>
+    <tr><td>Mesosfera</td><td>47 – 86</td><td>variable / negativo</td></tr>
+  </table>
+
+  <div class="eq-box">
+    <div class="eq-label">Temperatura con gradiente (troposfera)</div>
+    <div class="eq-main">T(h) = T<sub>0</sub> + L·h</div>
+    <div class="eq-sub">T₀ = 288.15 K, L = −0.0065 K/m</div>
+  </div>
+  <div class="eq-box">
+    <div class="eq-label">Presión (troposfera)</div>
+    <div class="eq-main">P(h) = P<sub>0</sub> · (T/T<sub>0</sub>)<sup>g/(R·|L|)</sup></div>
+    <div class="eq-sub">Exponente ≈ 5.2561 · Densidad: ρ = P / (R·T), R = 287 J/(kg·K)</div>
+  </div>
+
+  <div class="demo-box">
+    <div class="demo-header"><div class="dot"></div>DEMO — Perfil de Atmósfera ISA</div>
+    <div class="demo-body">
+      <div class="slider-row">
+        <label>Altitud h [km]</label>
+        <input type="range" id="s5-alt" min="0" max="150" value="0" step="0.5" oninput="updateISA()">
+        <span class="val-display" id="d5-alt">0 km</span>
+      </div>
+      <div class="atm-display">
+        <div class="atm-card">
+          <div class="ac-label">Temperatura</div>
+          <div class="ac-val" id="isa-T" style="color:#f97316">288.15 K</div>
+          <div style="font-size:11px;color:var(--text3)" id="isa-Tc">15.0 °C</div>
+        </div>
+        <div class="atm-card">
+          <div class="ac-label">Presión</div>
+          <div class="ac-val" id="isa-P" style="color:#3b82f6">101 325 Pa</div>
+          <div style="font-size:11px;color:var(--text3)" id="isa-Patm">1.000 atm</div>
+        </div>
+        <div class="atm-card">
+          <div class="ac-label">Densidad</div>
+          <div class="ac-val" id="isa-rho" style="color:#10b981">1.225 kg/m³</div>
+          <div style="font-size:11px;color:var(--text3)" id="isa-pct">100%</div>
+        </div>
+      </div>
+      <canvas id="isa-canvas" class="demo-canvas" height="220" style="margin-top:12px"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ MÓDULO 6 ═══════════ -->
+<section class="module" id="mod6">
+  <div class="module-tag">Módulo 06</div>
+  <h2>Gravedad Variable con Altitud</h2>
+  <p>La gravedad no es constante. A 150 km de altitud (apogeo del MIURA 1) la aceleración gravitacional ya es notablemente menor que en la superficie.</p>
+
+  <div class="eq-box">
+    <div class="eq-label">Ley de gravitación universal</div>
+    <div class="eq-main">g(h) = g<sub>0</sub> · (R<sub>⊕</sub> / (R<sub>⊕</sub> + h))²</div>
+    <div class="eq-sub">g₀ = 9.80665 m/s² · R⊕ = 6 371 000 m</div>
+  </div>
+
+  <div class="demo-box">
+    <div class="demo-header"><div class="dot"></div>DEMO — Gravedad vs Altitud</div>
+    <div class="demo-body">
+      <div class="slider-row">
+        <label>Altitud h [km]</label>
+        <input type="range" id="s6-alt" min="0" max="500" value="0" step="1" oninput="updateGravity()">
+        <span class="val-display" id="d6-alt">0 km</span>
+      </div>
+      <div class="result-display">
+        <div><div class="r-label">g(h)</div><div><span class="r-val" id="g-result">9.807</span> <span class="r-unit">m/s²</span></div></div>
+        <div><div class="r-label">Reducción</div><div><span class="r-val" id="g-pct" style="color:var(--accent2)">0.0</span> <span class="r-unit">%</span></div></div>
+      </div>
+      <canvas id="grav-canvas" class="demo-canvas" height="200" style="margin-top:12px"></canvas>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>A 150 km:</strong> g ≈ 9.36 m/s² — una reducción del 4.5%. A 400 km (ISS): g ≈ 8.69 m/s² — el 88.5% del valor en superficie. ¡Los astronautas no flotan porque no hay gravedad, sino porque están en caída libre constante!
+  </div>
+</section>
+
+<!-- ═══════════ MÓDULO 7 ═══════════ -->
+<section class="module" id="mod7">
+  <div class="module-tag">Módulo 07</div>
+  <h2>Integración Numérica: El Problema</h2>
+  <p>Las ecuaciones de movimiento del MIURA 1 no tienen solución analítica cerrada porque ρ(h), g(h), Cd(Ma) y m(t) cambian simultáneamente. Necesitamos <strong style="color:var(--text)">integración numérica</strong>: discretizar el tiempo y avanzar paso a paso.</p>
+
+  <h3>Método de Euler (orden 1)</h3>
+  <div class="eq-box">
+    <div class="eq-label">Paso de Euler</div>
+    <div class="eq-main">y<sub>n+1</sub> = y<sub>n</sub> + h · f(t<sub>n</sub>, y<sub>n</sub>)</div>
+    <div class="eq-sub">h = tamaño del paso temporal · f = derivada en el punto actual</div>
+  </div>
+
+  <p>Euler usa <strong style="color:var(--text)">solo la pendiente al inicio del paso</strong>. Si la función tiene curvatura, el error se acumula. Para un paso h = 1 s en la trayectoria del MIURA 1, el error en altitud al final puede ser de kilómetros.</p>
+
+  <div class="demo-box">
+    <div class="demo-header"><div class="dot"></div>DEMO — Error de Euler Visualizado</div>
+    <div class="demo-body">
+      <div class="slider-row">
+        <label>Tamaño del paso h [s]</label>
+        <input type="range" id="s7-step" min="0.01" max="5" value="1" step="0.01" oninput="updateEulerDemo()">
+        <span class="val-display" id="d7-step">1.00 s</span>
+      </div>
+      <canvas id="euler-canvas" class="demo-canvas" height="230"></canvas>
+      <div class="result-display">
+        <div><div class="r-label">Error final</div><div><span class="r-val" id="euler-err">0</span> <span class="r-unit">m</span></div></div>
+        <div><div class="r-label">Pasos usados</div><div><span class="r-val" id="euler-steps" style="color:var(--accent2)">0</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ MÓDULO 8 ═══════════ -->
+<section class="module" id="mod8">
+  <div class="module-tag">Módulo 08</div>
+  <h2>Método Runge-Kutta 4 (RK4)</h2>
+  <p>RK4 evalúa la pendiente en <strong style="color:var(--text)">4 puntos por paso</strong> y las promedia con pesos específicos. El error de truncación es O(h⁵) por paso — dramáticamente menor que Euler O(h²).</p>
+
+  <h3>Las 4 etapas</h3>
+  <div class="eq-box">
+    <div class="eq-label">RK4 — un paso completo</div>
+    <div class="eq-main">k<sub>1</sub> = f(t, y)</div>
+    <div class="eq-main">k<sub>2</sub> = f(t + h/2, y + h·k<sub>1</sub>/2)</div>
+    <div class="eq-main">k<sub>3</sub> = f(t + h/2, y + h·k<sub>2</sub>/2)</div>
+    <div class="eq-main">k<sub>4</sub> = f(t + h, y + h·k<sub>3</sub>)</div>
+    <div class="eq-main" style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">y<sub>n+1</sub> = y<sub>n</sub> + (h/6)·(k<sub>1</sub> + 2k<sub>2</sub> + 2k<sub>3</sub> + k<sub>4</sub>)</div>
+    <div class="eq-sub">k1 = pendiente inicial · k2,k3 = pendientes en el punto medio · k4 = pendiente final</div>
+  </div>
+
+  <p>La intuición: RK4 "explora" el intervalo antes de comprometerse. Con h = 1 s, RK4 en la trayectoria del MIURA 1 tiene un error cientos de veces menor que Euler con el mismo paso.</p>
+
+  <div class="demo-box">
+    <div class="demo-header"><div class="dot"></div>DEMO — Comparativa Euler vs RK4</div>
+    <div class="demo-body">
+      <div class="slider-row">
+        <label>Tamaño del paso h [s]</label>
+        <input type="range" id="s8-step" min="0.1" max="5" value="2" step="0.1" oninput="updateRK4Demo()">
+        <span class="val-display" id="d8-step">2.0 s</span>
+      </div>
+      <canvas id="rk4-canvas" class="demo-canvas" height="240"></canvas>
+      <div class="result-display">
+        <div><div class="r-label">Error Euler</div><div><span class="r-val" id="rk4-euler-err" style="color:#ef4444">—</span> <span class="r-unit">m</span></div></div>
+        <div><div class="r-label">Error RK4</div><div><span class="r-val" id="rk4-rk4-err" style="color:var(--accent3)">—</span> <span class="r-unit">m</span></div></div>
+        <div><div class="r-label">Mejora</div><div><span class="r-val" id="rk4-ratio" style="color:var(--accent2)">—</span> <span class="r-unit">×</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ MÓDULO 9 ═══════════ -->
+<section class="module" id="mod9">
+  <div class="module-tag">Módulo 09</div>
+  <h2>Máquina de Estados (FSM)</h2>
+  <p>Un lanzamiento no es continuo: atraviesa <strong style="color:var(--text)">fases discretas</strong> con física diferente. Una <em>Finite State Machine</em> (FSM) modela esto elegantemente — cada estado define qué ecuaciones están activas.</p>
+
+  <div class="eq-box">
+    <div class="eq-label">Transición de estados</div>
+    <div class="eq-main">IDLE → IGNITION → LIFTOFF → ASCENT → MECO → COAST → APOGEE → DESCENT → LANDING</div>
+    <div class="eq-sub">Cada flecha representa una condición de transición (tiempo, altitud, velocidad, etc.)</div>
+  </div>
+
+  <div class="demo-box">
+    <div class="demo-header"><div class="dot"></div>DEMO — FSM Interactiva del MIURA 1</div>
+    <div class="demo-body">
+      <div class="fsm-grid" id="fsm-grid"></div>
+      <div class="fsm-info" id="fsm-info">
+        <strong>Selecciona un estado</strong> para ver qué física está activa en esa fase del vuelo.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ MÓDULO 10 ═══════════ -->
+<section class="module" id="mod10">
+  <div class="module-tag">Módulo 10</div>
+  <h2>Telemetría y Max-Q</h2>
+  <p>Durante el vuelo, el simulador registra múltiples canales de telemetría en cada paso de integración. El más crítico estructuralmente es la <strong style="color:var(--text)">presión dinámica (q)</strong>.</p>
+
+  <h3>Canales de telemetría</h3>
+  <div class="cards-grid">
+    <div class="info-card"><div class="ic-label">Altitud</div><div class="ic-val" style="color:#f97316">h [m]</div><div class="ic-desc">Integración de velocidad vertical</div></div>
+    <div class="info-card"><div class="ic-label">Velocidad</div><div class="ic-val" style="color:#3b82f6">v [m/s]</div><div class="ic-desc">Integración de aceleración neta</div></div>
+    <div class="info-card"><div class="ic-label">Aceleración</div><div class="ic-val" style="color:#10b981">a [m/s²]</div><div class="ic-desc">(T−D−W)/m en cada paso</div></div>
+    <div class="info-card"><div class="ic-label">Masa</div><div class="ic-val" style="color:#a78bfa">m [kg]</div><div class="ic-desc">m₀ − ṁ·t durante encendido</div></div>
+    <div class="info-card"><div class="ic-label">Mach</div><div class="ic-val" style="color:#fbbf24">Ma</div><div class="ic-desc">v / a(h) sonido local</div></div>
+    <div class="info-card"><div class="ic-label">Presión dinámica</div><div class="ic-val" style="color:#f43f5e">q [Pa]</div><div class="ic-desc">½·ρ·v² — carga estructural</div></div>
+  </div>
+
+  <h3>Max-Q</h3>
+  <div class="eq-box">
+    <div class="eq-label">Presión dinámica</div>
+    <div class="eq-main">q(t) = ½ · ρ(h) · v²</div>
+    <div class="eq-sub">Máximo cuando el producto ρ·v² es mayor — normalmente entre 10 y 20 km de altitud.</div>
+  </div>
+  <p><strong style="color:var(--text)">Max-Q</strong> es el momento en que la estructura soporta la máxima carga aerodinámica. Los motores suelen throttlear ligeramente en este punto para reducir el estrés. Para el MIURA 1, Max-Q ocurre aproximadamente a los 12–15 km de altitud.</p>
+
+  <div class="demo-box">
+    <div class="demo-header"><div class="dot"></div>DEMO — Presión Dinámica durante el Ascenso</div>
+    <div class="demo-body">
+      <canvas id="maxq-canvas" class="demo-canvas" height="250"></canvas>
+      <div class="result-display" id="maxq-result">
+        <div><div class="r-label">Max-Q</div><div><span class="r-val" id="maxq-val">—</span> <span class="r-unit">Pa</span></div></div>
+        <div><div class="r-label">Altitud Max-Q</div><div><span class="r-val" id="maxq-alt" style="color:var(--accent2)">—</span> <span class="r-unit">km</span></div></div>
+        <div><div class="r-label">Tiempo Max-Q</div><div><span class="r-val" id="maxq-time" style="color:var(--accent3)">—</span> <span class="r-unit">s</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight" style="margin-top:32px;border-color:rgba(59,130,246,0.3);background:rgba(59,130,246,0.06)">
+    <strong style="color:var(--accent2)">Enhorabuena — has completado el curso.</strong> Ahora conoces toda la física que hay detrás del simulador MIURA 1: desde las leyes de Newton hasta RK4, pasando por la atmósfera ISA, la ecuación de Tsiolkovsky y la máquina de estados de un lanzamiento real.
+  </div>
+</section>
+
+</main>
+
+<script>
+// ═══════════════════════════════════════════════
+//  STARS CANVAS
+// ═══════════════════════════════════════════════
+(function(){
+  const c = document.getElementById('stars-canvas');
+  const ctx = c.getContext('2d');
+  let W, H, stars = [];
+  function resize(){
+    W = c.width = window.innerWidth;
+    H = c.height = window.innerHeight;
+  }
+  function mkStars(){
+    stars = [];
+    for(let i=0;i<200;i++){
+      stars.push({
+        x:Math.random()*W, y:Math.random()*H,
+        r:Math.random()*1.4+0.3,
+        a:Math.random(),
+        da:(Math.random()-0.5)*0.003,
+        layer:Math.floor(Math.random()*3)+1
+      });
+    }
+  }
+  let scrollY=0;
+  window.addEventListener('scroll',()=>{ scrollY=window.scrollY; });
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s=>{
+      s.a+=s.da;
+      if(s.a<0.1) s.da=Math.abs(s.da);
+      if(s.a>1) s.da=-Math.abs(s.da);
+      const py = (s.y - scrollY*0.02*s.layer + H*100) % H;
+      ctx.beginPath();
+      ctx.arc(s.x, py, s.r, 0, Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${s.a*0.7})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', ()=>{ resize(); mkStars(); });
+  resize(); mkStars(); draw();
+})();
+
+// ═══════════════════════════════════════════════
+//  PROGRESS + NAV
+// ═══════════════════════════════════════════════
+const modules = ['mod0','mod1','mod2','mod3','mod4','mod5','mod6','mod7','mod8','mod9','mod10'];
+const navItems = document.querySelectorAll('.nav-item');
+const seen = new Set();
+
+function getModuleProgress(){
+  const seen2 = new Set();
+  modules.forEach((id,i)=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    const rect = el.getBoundingClientRect();
+    if(rect.top < window.innerHeight*0.8) seen2.add(id);
+  });
+  return seen2;
+}
+
+function updateProgress(){
+  const s = getModuleProgress();
+  s.forEach(id=>seen.add(id));
+  const pct = Math.round((seen.size/modules.length)*100);
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('pct-text').textContent = pct+'%';
+
+  // active + done
+  navItems.forEach((el,i)=>{
+    const id = modules[i];
+    el.classList.toggle('done', seen.has(id));
+    const rect = document.getElementById(id)?.getBoundingClientRect();
+    if(rect){
+      const inView = rect.top < window.innerHeight*0.5 && rect.bottom > 0;
+      el.classList.toggle('active', inView);
+    }
+  });
+}
+window.addEventListener('scroll', updateProgress);
+updateProgress();
+
+// ═══════════════════════════════════════════════
+//  MOBILE SIDEBAR
+// ═══════════════════════════════════════════════
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+document.getElementById('overlay').addEventListener('click', toggleSidebar);
+
+// ═══════════════════════════════════════════════
+//  PHYSICS HELPERS
+// ═══════════════════════════════════════════════
+const G0 = 9.80665;
+const RE = 6371000;
+const R_AIR = 287.058;
+const GAMMA = 1.4;
+const MIURA = { dryMass:1000, propMass:2500, isp:290, thrust:30000, diameter:0.70, cd:0.35 };
+const A_REF = Math.PI * Math.pow(MIURA.diameter/2, 2);
+
+function isaAtmosphere(h_m){
+  const layers = [
+    {hb:0,     Tb:288.15, Lb:-0.0065, Pb:101325},
+    {hb:11000, Tb:216.65, Lb:0,       Pb:22632.1},
+    {hb:20000, Tb:216.65, Lb:0.001,   Pb:5474.89},
+    {hb:32000, Tb:228.65, Lb:0.0028,  Pb:868.019},
+    {hb:47000, Tb:270.65, Lb:0,       Pb:110.906},
+    {hb:51000, Tb:270.65, Lb:-0.0028, Pb:66.9389},
+    {hb:71000, Tb:214.65, Lb:-0.002,  Pb:3.95642},
+    {hb:86000, Tb:186.87, Lb:0,       Pb:0.3734}
+  ];
+  if(h_m > 150000) return {T:186.87, P:0.001, rho:0.000001};
+  let layer = layers[layers.length-1];
+  for(let i=0;i<layers.length-1;i++){
+    if(h_m < layers[i+1].hb){ layer=layers[i]; break; }
+  }
+  const dh = h_m - layer.hb;
+  let T, P;
+  if(Math.abs(layer.Lb) < 1e-10){
+    T = layer.Tb;
+    P = layer.Pb * Math.exp(-G0*dh/(R_AIR*T));
+  } else {
+    T = layer.Tb + layer.Lb*dh;
+    P = layer.Pb * Math.pow(T/layer.Tb, -G0/(R_AIR*layer.Lb));
+  }
+  const rho = P/(R_AIR*T);
+  return {T, P, rho};
+}
+
+function grav(h_m){ return G0 * Math.pow(RE/(RE+h_m), 2); }
+
+function soundSpeed(T){ return Math.sqrt(GAMMA*R_AIR*T); }
+
+function cdMach(ma){
+  // Empirical Cd(Mach) curve for slender rocket body
+  if(ma < 0.5) return 0.22;
+  if(ma < 0.8) return 0.22 + (ma-0.5)/0.3*0.05;
+  if(ma < 0.95) return 0.27 + (ma-0.8)/0.15*0.12;
+  if(ma < 1.05) return 0.39 + (ma-0.95)/0.1*0.12;  // transonic peak
+  if(ma < 1.2) return 0.51 - (ma-1.05)/0.15*0.12;
+  if(ma < 2.0) return 0.39 - (ma-1.2)/0.8*0.10;
+  if(ma < 4.0) return 0.29 - (ma-2.0)/2.0*0.06;
+  return 0.23;
+}
+
+// Simple trajectory simulation for demos
+function simulateTrajectory(dt){
+  let t=0, h=0, v=0;
+  const m0=MIURA.dryMass+MIURA.propMass;
+  const mdot=MIURA.thrust/(MIURA.isp*G0);
+  const burnTime=MIURA.propMass/mdot;
+  const result=[];
+  let m=m0;
+  while(h>=0 || t<5){
+    const atm=isaAtmosphere(h);
+    const g=grav(h);
+    const a_s=soundSpeed(atm.T);
+    const ma=Math.abs(v)/a_s;
+    const cd=cdMach(ma);
+    const drag=0.5*atm.rho*v*Math.abs(v)*cd*A_REF;
+    const thrust=(t<burnTime)?MIURA.thrust:0;
+    if(t<burnTime) m=m0-mdot*t;
+    const acc=(thrust-drag)/m - g;
+    result.push({t,h,v,a:acc,m,ma,q:0.5*atm.rho*v*v,rho:atm.rho,T:atm.T,P:atm.P});
+    v+=acc*dt;
+    h+=v*dt;
+    t+=dt;
+    if(t>600) break;
+  }
+  return result;
+}
+
+// ═══════════════════════════════════════════════
+//  MODULE 1 — FBD
+// ═══════════════════════════════════════════════
+function updateFBD(){
+  const T = +document.getElementById('s1-thrust').value;
+  const m = +document.getElementById('s1-mass').value;
+  const v = +document.getElementById('s1-vel').value;
+  const h = +document.getElementById('s1-alt').value * 1000;
+  document.getElementById('d1-thrust').textContent = T.toLocaleString('es-ES')+' N';
+  document.getElementById('d1-mass').textContent = m.toLocaleString('es-ES')+' kg';
+  document.getElementById('d1-vel').textContent = v+' m/s';
+  document.getElementById('d1-alt').textContent = (+document.getElementById('s1-alt').value)+' km';
+
+  const atm = isaAtmosphere(h);
+  const g = grav(h);
+  const drag = 0.5*atm.rho*v*v*MIURA.cd*A_REF;
+  const weight = m*g;
+  const acc = (T - drag - weight)/m;
+
+  document.getElementById('fbd-acc').textContent = acc.toFixed(2);
+  document.getElementById('fbd-w').textContent = Math.round(weight).toLocaleString('es-ES');
+  document.getElementById('fbd-d').textContent = Math.round(drag).toLocaleString('es-ES');
+
+  const canvas = document.getElementById('fbd-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth; const H = 240;
+  canvas.width = W; canvas.height = H;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#0d1117';
+  ctx.fillRect(0,0,W,H);
+
+  // Rocket body
+  const cx=W/2, cy=H/2;
+  ctx.save();
+  ctx.fillStyle='#21262d';ctx.strokeStyle='#30363d';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.roundRect(cx-12,cy-40,24,70,4);ctx.fill();ctx.stroke();
+  // Nose
+  ctx.fillStyle='#30363d';
+  ctx.beginPath();ctx.moveTo(cx-12,cy-40);ctx.lineTo(cx,cy-68);ctx.lineTo(cx+12,cy-40);ctx.fill();
+  ctx.restore();
+
+  const maxF = Math.max(T, weight, drag, 1);
+  const scale = 60/maxF;
+  function arrow(from_x, from_y, len, color, label){
+    const to_y = from_y - len;
+    ctx.strokeStyle=color; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.moveTo(from_x, from_y); ctx.lineTo(from_x, to_y); ctx.stroke();
+    const dir = len>0?-1:1;
+    ctx.fillStyle=color;
+    ctx.beginPath();ctx.moveTo(from_x,to_y);ctx.lineTo(from_x-5,to_y+dir*10);ctx.lineTo(from_x+5,to_y+dir*10);ctx.fill();
+    ctx.fillStyle=color; ctx.font='bold 11px Inter'; ctx.textAlign='center';
+    ctx.fillText(label, from_x, to_y-5*dir);
+  }
+  // Thrust (up, orange)
+  arrow(cx, cy+30, Math.min(T*scale, 80), '#f97316', 'T='+Math.round(T/1000)+'kN');
+  // Weight (down, red)
+  const wLen = Math.min(weight*scale, 70);
+  arrow(cx+30, cy, -wLen, '#ef4444', 'W='+Math.round(weight/1000)+'kN');
+  // Drag (down, blue)
+  const dLen = Math.min(drag*scale, 60);
+  arrow(cx-30, cy, -dLen, '#3b82f6', 'D='+Math.round(drag)+'N');
+  // Net accel indicator
+  ctx.fillStyle = acc>=0?'#10b981':'#ef4444';
+  ctx.font='12px Inter'; ctx.textAlign='left';
+  ctx.fillText('a = '+(acc>=0?'+':'')+acc.toFixed(1)+' m/s²', 8, 20);
+}
+updateFBD();
+
+// ═══════════════════════════════════════════════
+//  MODULE 2 — THRUST CALCULATOR
+// ═══════════════════════════════════════════════
+function updateThrust(){
+  const mdot=+document.getElementById('s2-mdot').value;
+  const ve=+document.getElementById('s2-ve').value;
+  const dp=+document.getElementById('s2-dp').value*1000;
+  const ae=+document.getElementById('s2-ae').value/10000;
+  document.getElementById('d2-mdot').textContent=mdot.toFixed(1)+' kg/s';
+  document.getElementById('d2-ve').textContent=ve.toLocaleString('es-ES')+' m/s';
+  document.getElementById('d2-dp').textContent=document.getElementById('s2-dp').value+' kPa';
+  document.getElementById('d2-ae').textContent=document.getElementById('s2-ae').value+' cm²';
+  const F=mdot*ve + dp*ae;
+  const isp=F/(mdot*G0);
+  document.getElementById('thrust-result').textContent=Math.round(F).toLocaleString('es-ES');
+  document.getElementById('isp-result').textContent=isp.toFixed(1);
+  document.getElementById('mdot-result').textContent=mdot.toFixed(1);
+}
+updateThrust();
+
+// ═══════════════════════════════════════════════
+//  MODULE 3 — TSIOLKOVSKY
+// ═══════════════════════════════════════════════
+function updateTsiolkovsky(){
+  const m0=+document.getElementById('s3-m0').value;
+  const mf=+document.getElementById('s3-mf').value;
+  const isp=+document.getElementById('s3-isp').value;
+  document.getElementById('d3-m0').textContent=m0.toLocaleString('es-ES')+' kg';
+  document.getElementById('d3-mf').textContent=mf.toLocaleString('es-ES')+' kg';
+  document.getElementById('d3-isp').textContent=isp+' s';
+  const mr=m0/mf;
+  const dv=isp*G0*Math.log(mr);
+  document.getElementById('dv-result').textContent=Math.round(dv).toLocaleString('es-ES');
+  document.getElementById('mr-result').textContent=mr.toFixed(2);
+  const pct=Math.min(dv/9400*100, 100);
+  document.getElementById('dv-bar').style.width=pct+'%';
+  document.getElementById('dv-bar').textContent=Math.round(dv).toLocaleString('es-ES')+' m/s';
+}
+updateTsiolkovsky();
+
+// ═══════════════════════════════════════════════
+//  MODULE 4 — Cd vs MACH CHART
+// ═══════════════════════════════════════════════
+function drawCdChart(){
+  const canvas=document.getElementById('cd-canvas');
+  const W=canvas.offsetWidth; const H=220;
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const pad={t:20,r:20,b:40,l:50};
+  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+  ctx.fillStyle='#0d1117'; ctx.fillRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle='#21262d'; ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y=pad.t+ch*i/5;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();
+    ctx.fillStyle='#6e7681';ctx.font='10px JetBrains Mono';ctx.textAlign='right';
+    ctx.fillText((0.5*(1-i/5)+0.15*(i/5)).toFixed(2),pad.l-5,y+4);
+  }
+  for(let i=0;i<=5;i++){
+    const x=pad.l+cw*i/5;
+    ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+ch);ctx.stroke();
+    ctx.fillStyle='#6e7681';ctx.font='10px JetBrains Mono';ctx.textAlign='center';
+    ctx.fillText((5*i/5).toFixed(1),x,pad.t+ch+14);
+  }
+  ctx.fillStyle='#8b949e';ctx.font='11px Inter';ctx.textAlign='center';
+  ctx.fillText('Número de Mach',pad.l+cw/2,H-4);
+  ctx.save();ctx.translate(12,pad.t+ch/2);ctx.rotate(-Math.PI/2);ctx.fillText('Cd',0,0);ctx.restore();
+
+  // Curve
+  const machs=[];
+  for(let m=0;m<=5;m+=0.05) machs.push(m);
+  const cdMin=0.15, cdMax=0.55;
+  ctx.beginPath();
+  machs.forEach((m,i)=>{
+    const cd=cdMach(m);
+    const x=pad.l+cw*(m/5);
+    const y=pad.t+ch*(1-(cd-cdMin)/(cdMax-cdMin));
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle='#f97316'; ctx.lineWidth=2.5; ctx.stroke();
+
+  // Fill under curve
+  ctx.lineTo(pad.l+cw,pad.t+ch); ctx.lineTo(pad.l,pad.t+ch); ctx.closePath();
+  ctx.fillStyle='rgba(249,115,22,0.07)'; ctx.fill();
+
+  // Labels
+  ctx.fillStyle='#f97316';ctx.font='bold 11px Inter';ctx.textAlign='center';
+  ctx.fillText('Subsónico',pad.l+cw*0.15,pad.t+ch-8);
+  ctx.fillStyle='#fbbf24';ctx.fillText('Transónico',pad.l+cw*0.18,pad.t+10);
+  ctx.fillStyle='#3b82f6';ctx.fillText('Supersónico',pad.l+cw*0.55,pad.t+ch-8);
+
+  // Mach=1 line
+  const x1=pad.l+cw*(1/5);
+  ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(x1,pad.t);ctx.lineTo(x1,pad.t+ch);ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Hover
+  canvas.onmousemove=function(e){
+    const rect=canvas.getBoundingClientRect();
+    const mx=e.clientX-rect.left;
+    const m=(mx-pad.l)/cw*5;
+    if(m<0||m>5) return;
+    const cd=cdMach(m);
+    drawCdChart();
+    const x=pad.l+cw*(m/5);
+    const y=pad.t+ch*(1-(cd-cdMin)/(cdMax-cdMin));
+    ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);
+    ctx.fillStyle='#f97316';ctx.fill();
+    ctx.fillStyle='#fff';ctx.font='bold 11px JetBrains Mono';ctx.textAlign='left';
+    ctx.fillText('Ma='+m.toFixed(2)+'  Cd='+cd.toFixed(3),x+10,y);
+  };
+}
+drawCdChart();
+window.addEventListener('resize', drawCdChart);
+
+// ═══════════════════════════════════════════════
+//  MODULE 5 — ISA
+// ═══════════════════════════════════════════════
+let isaCanvas_drawn = false;
+function drawISAProfiles(){
+  const canvas=document.getElementById('isa-canvas');
+  const W=canvas.offsetWidth; const H=220;
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#0d1117'; ctx.fillRect(0,0,W,H);
+  const pad={t:15,r:20,b:30,l:50};
+  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+  const hMax=80000; // 80 km
+
+  // Axes
+  ctx.strokeStyle='#30363d'; ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ch);ctx.lineTo(pad.l+cw,pad.t+ch);ctx.stroke();
+
+  // Labels
+  ctx.fillStyle='#6e7681';ctx.font='10px JetBrains Mono';
+  for(let i=0;i<=4;i++){
+    const h=hMax*i/4;
+    const y=pad.t+ch*(1-i/4);
+    ctx.textAlign='right'; ctx.fillText((h/1000).toFixed(0)+'km',pad.l-4,y+4);
+    ctx.strokeStyle='#21262d';ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();
+  }
+
+  // ρ curve (normalized)
+  function drawCurve(color, fn, normMax, label){
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const h=hMax*i/200;
+      const v=fn(h);
+      const x=pad.l+cw*(v/normMax);
+      const y=pad.t+ch*(1-h/hMax);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=color; ctx.lineWidth=2; ctx.stroke();
+    // label at h=5km
+    const h0=5000, v0=fn(h0);
+    const lx=pad.l+cw*(v0/normMax);
+    const ly=pad.t+ch*(1-h0/hMax);
+    ctx.fillStyle=color; ctx.font='10px Inter'; ctx.textAlign='left';
+    ctx.fillText(label, Math.min(lx+6, pad.l+cw-50), ly);
+  }
+  drawCurve('#f97316', h=>isaAtmosphere(h).rho/isaAtmosphere(0).rho, 1.1, 'ρ(h)/ρ₀');
+  drawCurve('#3b82f6', h=>isaAtmosphere(h).P/isaAtmosphere(0).P, 1.1, 'P(h)/P₀');
+  drawCurve('#10b981', h=>isaAtmosphere(h).T/isaAtmosphere(0).T, 1.1, 'T(h)/T₀');
+
+  ctx.fillStyle='#8b949e';ctx.font='11px Inter';ctx.textAlign='center';
+  ctx.fillText('Fracción del valor en superficie →', pad.l+cw/2, H-2);
+}
+
+function updateISA(){
+  const h=+document.getElementById('s5-alt').value;
+  document.getElementById('d5-alt').textContent=h+' km';
+  const atm=isaAtmosphere(h*1000);
+  const atm0=isaAtmosphere(0);
+  document.getElementById('isa-T').textContent=atm.T.toFixed(2)+' K';
+  document.getElementById('isa-Tc').textContent=(atm.T-273.15).toFixed(1)+' °C';
+  document.getElementById('isa-P').textContent=Math.round(atm.P).toLocaleString('es-ES')+' Pa';
+  document.getElementById('isa-Patm').textContent=(atm.P/101325).toFixed(4)+' atm';
+  document.getElementById('isa-rho').textContent=atm.rho.toFixed(5)+' kg/m³';
+  document.getElementById('isa-pct').textContent=(atm.rho/atm0.rho*100).toFixed(2)+'%';
+  drawISAProfiles();
+}
+updateISA();
+
+// ═══════════════════════════════════════════════
+//  MODULE 6 — GRAVITY
+// ═══════════════════════════════════════════════
+function drawGravCanvas(){
+  const canvas=document.getElementById('grav-canvas');
+  const W=canvas.offsetWidth; const H=200;
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#0d1117'; ctx.fillRect(0,0,W,H);
+  const pad={t:15,r:20,b:30,l:55};
+  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+  const hMax=500;
+  const gMin=7.5, gMax=9.9;
+
+  ctx.strokeStyle='#21262d';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=pad.t+ch*i/4;
+    const gv=gMax-(gMax-gMin)*i/4;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();
+    ctx.fillStyle='#6e7681';ctx.font='10px JetBrains Mono';ctx.textAlign='right';
+    ctx.fillText(gv.toFixed(2),pad.l-4,y+4);
+  }
+  for(let i=0;i<=5;i++){
+    const x=pad.l+cw*i/5;
+    ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+ch);ctx.stroke();
+    ctx.fillStyle='#6e7681';ctx.font='10px JetBrains Mono';ctx.textAlign='center';
+    ctx.fillText(hMax*i/5+'km',x,pad.t+ch+14);
+  }
+
+  ctx.beginPath();
+  for(let i=0;i<=200;i++){
+    const h=hMax*1000*i/200;
+    const g=grav(h);
+    const x=pad.l+cw*(h/1000/hMax);
+    const y=pad.t+ch*(1-(g-gMin)/(gMax-gMin));
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.strokeStyle='#a78bfa';ctx.lineWidth=2.5;ctx.stroke();
+
+  ctx.fillStyle='#8b949e';ctx.font='11px Inter';ctx.textAlign='center';
+  ctx.fillText('Altitud [km]',pad.l+cw/2,H-2);
+  ctx.save();ctx.translate(14,pad.t+ch/2);ctx.rotate(-Math.PI/2);ctx.fillStyle='#8b949e';ctx.fillText('g [m/s²]',0,0);ctx.restore();
+
+  // current marker
+  const hCur=+document.getElementById('s6-alt').value;
+  const gCur=grav(hCur*1000);
+  const mx=pad.l+cw*(hCur/hMax);
+  const my=pad.t+ch*(1-(gCur-gMin)/(gMax-gMin));
+  ctx.beginPath();ctx.arc(mx,my,5,0,Math.PI*2);
+  ctx.fillStyle='#f97316';ctx.fill();
+}
+function updateGravity(){
+  const h=+document.getElementById('s6-alt').value;
+  document.getElementById('d6-alt').textContent=h+' km';
+  const g=grav(h*1000);
+  document.getElementById('g-result').textContent=g.toFixed(3);
+  document.getElementById('g-pct').textContent=((1-g/G0)*100).toFixed(2);
+  drawGravCanvas();
+}
+updateGravity();
+
+// ═══════════════════════════════════════════════
+//  MODULE 7 — EULER ERROR
+// ═══════════════════════════════════════════════
+// Animate a simple ODE: dy/dt = cos(t), exact: sin(t)
+function eulerSolve(dt, tMax){
+  let y=0, t=0, pts=[];
+  while(t<=tMax){
+    pts.push({t,y});
+    y+=dt*Math.cos(t);
+    t+=dt;
+  }
+  return pts;
+}
+function exactSin(t){ return Math.sin(t); }
+
+function updateEulerDemo(){
+  const dt=+document.getElementById('s7-step').value;
+  document.getElementById('d7-step').textContent=dt.toFixed(2)+' s';
+  const tMax=10;
+  const euler=eulerSolve(dt, tMax);
+  const exactFinal=exactSin(tMax);
+  const eulerFinal=euler[euler.length-1].y;
+  const err=Math.abs(eulerFinal-exactFinal);
+  document.getElementById('euler-err').textContent=err.toFixed(4);
+  document.getElementById('euler-steps').textContent=euler.length;
+  drawEulerCanvas(dt, euler, tMax);
+}
+function drawEulerCanvas(dt, euler, tMax){
+  const canvas=document.getElementById('euler-canvas');
+  const W=canvas.offsetWidth; const H=230;
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#0d1117';ctx.fillRect(0,0,W,H);
+  const pad={t:20,r:20,b:30,l:45};
+  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+  const yMin=-1.3, yMax=1.3;
+
+  ctx.strokeStyle='#21262d';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=pad.t+ch*i/4;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();
+  }
+  // Zero line
+  const y0=pad.t+ch*(1-(0-yMin)/(yMax-yMin));
+  ctx.strokeStyle='#30363d';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(pad.l,y0);ctx.lineTo(pad.l+cw,y0);ctx.stroke();
+
+  // Exact
+  ctx.beginPath();
+  for(let i=0;i<=200;i++){
+    const t=tMax*i/200;
+    const y=exactSin(t);
+    const x=pad.l+cw*(t/tMax);
+    const yy=pad.t+ch*(1-(y-yMin)/(yMax-yMin));
+    if(i===0) ctx.moveTo(x,yy); else ctx.lineTo(x,yy);
+  }
+  ctx.strokeStyle='#10b981';ctx.lineWidth=2;ctx.stroke();
+
+  // Euler
+  ctx.strokeStyle='#f97316';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+  ctx.beginPath();
+  euler.forEach((p,i)=>{
+    const x=pad.l+cw*(p.t/tMax);
+    const yy=pad.t+ch*(1-(p.y-yMin)/(yMax-yMin));
+    if(i===0) ctx.moveTo(x,yy); else ctx.lineTo(x,yy);
+  });
+  ctx.stroke();ctx.setLineDash([]);
+
+  // Legend
+  ctx.fillStyle='#10b981';ctx.font='11px Inter';ctx.textAlign='left';
+  ctx.fillText('Exacta: sin(t)', pad.l+8, pad.t+14);
+  ctx.fillStyle='#f97316';
+  ctx.fillText('Euler (h='+dt.toFixed(2)+'s)', pad.l+8, pad.t+28);
+}
+updateEulerDemo();
+
+// ═══════════════════════════════════════════════
+//  MODULE 8 — RK4 vs EULER
+// ═══════════════════════════════════════════════
+function rk4Solve(dt, tMax){
+  let y=0, t=0, pts=[];
+  const f=(t,y)=>Math.cos(t);
+  while(t<=tMax){
+    pts.push({t,y});
+    const k1=f(t,y);
+    const k2=f(t+dt/2, y+dt*k1/2);
+    const k3=f(t+dt/2, y+dt*k2/2);
+    const k4=f(t+dt, y+dt*k3);
+    y+=dt*(k1+2*k2+2*k3+k4)/6;
+    t+=dt;
+  }
+  return pts;
+}
+
+function updateRK4Demo(){
+  const dt=+document.getElementById('s8-step').value;
+  document.getElementById('d8-step').textContent=dt.toFixed(1)+' s';
+  const tMax=10;
+  const euler=eulerSolve(dt, tMax);
+  const rk4=rk4Solve(dt, tMax);
+  const exact=exactSin(tMax);
+  const eErr=Math.abs(euler[euler.length-1].y-exact);
+  const rErr=Math.abs(rk4[rk4.length-1].y-exact);
+  document.getElementById('rk4-euler-err').textContent=eErr.toFixed(4);
+  document.getElementById('rk4-rk4-err').textContent=rErr.toFixed(6);
+  const ratio=rErr>1e-10?eErr/rErr:Infinity;
+  document.getElementById('rk4-ratio').textContent=ratio>999?'>999':ratio.toFixed(0);
+  drawRK4Canvas(dt, euler, rk4, tMax);
+}
+function drawRK4Canvas(dt, euler, rk4, tMax){
+  const canvas=document.getElementById('rk4-canvas');
+  const W=canvas.offsetWidth; const H=240;
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#0d1117';ctx.fillRect(0,0,W,H);
+  const pad={t:20,r:20,b:30,l:45};
+  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+  const yMin=-1.5, yMax=1.5;
+  const y0=pad.t+ch*(1-(0-yMin)/(yMax-yMin));
+  ctx.strokeStyle='#30363d';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(pad.l,y0);ctx.lineTo(pad.l+cw,y0);ctx.stroke();
+
+  function drawLine(pts, color, dash){
+    ctx.strokeStyle=color;ctx.lineWidth=2;
+    if(dash) ctx.setLineDash([4,3]); else ctx.setLineDash([]);
+    ctx.beginPath();
+    pts.forEach((p,i)=>{
+      const x=pad.l+cw*(p.t/tMax);
+      const yy=pad.t+ch*(1-(p.y-yMin)/(yMax-yMin));
+      if(i===0) ctx.moveTo(x,yy); else ctx.lineTo(x,yy);
+    });
+    ctx.stroke();ctx.setLineDash([]);
+  }
+  // Exact
+  const exactPts=[];
+  for(let i=0;i<=300;i++) exactPts.push({t:tMax*i/300, y:exactSin(tMax*i/300)});
+  drawLine(exactPts,'#10b981',false);
+  drawLine(euler,'#ef4444',true);
+  drawLine(rk4,'#3b82f6',false);
+
+  ctx.font='11px Inter';ctx.textAlign='left';
+  ctx.fillStyle='#10b981';ctx.fillText('Exacta',pad.l+8,pad.t+14);
+  ctx.fillStyle='#ef4444';ctx.fillText('Euler',pad.l+8,pad.t+28);
+  ctx.fillStyle='#3b82f6';ctx.fillText('RK4',pad.l+8,pad.t+42);
+}
+updateRK4Demo();
+
+// ═══════════════════════════════════════════════
+//  MODULE 9 — FSM
+// ═══════════════════════════════════════════════
+const FSM_STATES = [
+  {name:'IDLE', info:'<strong>Motor apagado, cohete en rampa.</strong> Física activa: ninguna. El simulador espera la señal de ignición. Masa = m₀ = 3 500 kg. Variables inicializadas: h=0, v=0, a=0.'},
+  {name:'IGNITION', info:'<strong>Secuencia de encendido del TEPREL-1B.</strong> El flujo másico ṁ = T/(Isp·g₀) ≈ 10.5 kg/s aumenta gradualmente. Se comprueba que el empuje supera el peso (T/W > 1). Duración: ~1-2 s.'},
+  {name:'LIFTOFF', info:'<strong>Despegue: T/W > 1.</strong> El cohete abandona la rampa. Física activa: propulsión completa, gravedad g(h), arrastre D=½ρv²CdA. Masa decreciente: m(t) = m₀ − ṁ·t.'},
+  {name:'ASCENT', info:'<strong>Ascenso motorizado.</strong> Todas las fuerzas activas. Integración RK4 en cada paso Δt. El cohete supera Mach 1 (~11-12 km). Se aproxima al Max-Q entre 10-18 km.'},
+  {name:'MECO', info:'<strong>Motor Engine Cut-Off.</strong> Condición: propelente agotado (t > burnTime ≈ 238 s). El empuje cae a cero instantáneamente. La masa seca m = 1 000 kg. El cohete sigue a ~v > 1 500 m/s.'},
+  {name:'COAST', info:'<strong>Trayectoria balística.</strong> Solo actúan gravedad y arrastre (muy pequeño a baja densidad). El cohete desacelera progresivamente. La integración continúa hasta v = 0.'},
+  {name:'APOGEE', info:'<strong>Punto más alto del vuelo.</strong> Condición: v ≤ 0 (velocidad vertical nula). h ≈ 150 km. Aquí se despliegan los sistemas de recuperación. La atmósfera es prácticamente nula (ρ ≈ 0).'},
+  {name:'DESCENT', info:'<strong>Caída libre / descenso.</strong> El cohete cae de vuelta hacia la Tierra. Al entrar en la atmósfera densa, el arrastre aumenta rápidamente. Velocidad negativa, altitud decreciente.'},
+  {name:'LANDING', info:'<strong>Aterrizaje / recuperación.</strong> Condición: h ≤ 0 y v < 0. La simulación termina. Se registran todos los datos de la misión: apogeo, tiempo de vuelo, Max-Q, velocidad máxima.'}
+];
+
+const grid=document.getElementById('fsm-grid');
+const info=document.getElementById('fsm-info');
+FSM_STATES.forEach((s,i)=>{
+  const btn=document.createElement('button');
+  btn.className='fsm-state';
+  btn.textContent=s.name;
+  btn.onclick=function(){
+    document.querySelectorAll('.fsm-state').forEach(b=>b.classList.remove('active-state'));
+    btn.classList.add('active-state');
+    info.innerHTML=s.info;
+  };
+  grid.appendChild(btn);
+});
+
+// ═══════════════════════════════════════════════
+//  MODULE 10 — MAX-Q
+// ═══════════════════════════════════════════════
+function drawMaxQ(){
+  const traj=simulateTrajectory(0.5);
+  const canvas=document.getElementById('maxq-canvas');
+  const W=canvas.offsetWidth; const H=250;
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#0d1117';ctx.fillRect(0,0,W,H);
+  const pad={t:20,r:40,b:35,l:65};
+  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+
+  const qs=traj.map(p=>p.q);
+  const maxQ=Math.max(...qs);
+  const maxQIdx=qs.indexOf(maxQ);
+  const maxQPt=traj[maxQIdx];
+  const tMax=traj[traj.length-1].t;
+
+  // Grid
+  ctx.strokeStyle='#21262d';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=pad.t+ch*i/4;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();
+    const v=maxQ*(1-i/4);
+    ctx.fillStyle='#6e7681';ctx.font='9px JetBrains Mono';ctx.textAlign='right';
+    ctx.fillText((v/1000).toFixed(1)+'k',pad.l-4,y+4);
+  }
+  for(let i=0;i<=5;i++){
+    const x=pad.l+cw*i/5;
+    ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+ch);ctx.stroke();
+    ctx.fillStyle='#6e7681';ctx.font='10px JetBrains Mono';ctx.textAlign='center';
+    ctx.fillText(Math.round(tMax*i/5)+'s',x,pad.t+ch+14);
+  }
+
+  // Second axis (altitude) — right side
+  ctx.fillStyle='#8b949e';ctx.font='10px Inter';ctx.textAlign='center';
+  ctx.fillText('Tiempo [s]',pad.l+cw/2,H-4);
+  ctx.save();ctx.translate(14,pad.t+ch/2);ctx.rotate(-Math.PI/2);ctx.fillStyle='#8b949e';ctx.fillText('q [Pa]',0,0);ctx.restore();
+  ctx.save();ctx.translate(W-10,pad.t+ch/2);ctx.rotate(-Math.PI/2);ctx.fillStyle='#3b82f6';ctx.fillText('Alt [km]',0,0);ctx.restore();
+
+  // Altitude curve
+  const hMax=Math.max(...traj.map(p=>p.h));
+  ctx.beginPath();
+  traj.forEach((p,i)=>{
+    const x=pad.l+cw*(p.t/tMax);
+    const y=pad.t+ch*(1-(p.h/hMax));
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle='rgba(59,130,246,0.4)';ctx.lineWidth=1.5;ctx.stroke();
+
+  // q curve
+  ctx.beginPath();
+  traj.forEach((p,i)=>{
+    const x=pad.l+cw*(p.t/tMax);
+    const y=pad.t+ch*(1-(p.q/maxQ));
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle='#f43f5e';ctx.lineWidth=2.5;ctx.stroke();
+  // Fill
+  const firstPt=traj[0], lastPt=traj[traj.length-1];
+  ctx.lineTo(pad.l+cw*(lastPt.t/tMax), pad.t+ch);
+  ctx.lineTo(pad.l+cw*(firstPt.t/tMax), pad.t+ch);
+  ctx.closePath();
+  ctx.fillStyle='rgba(244,63,94,0.07)';ctx.fill();
+
+  // Max-Q marker
+  const mxX=pad.l+cw*(maxQPt.t/tMax);
+  const mxY=pad.t+ch*(1-(maxQPt.q/maxQ));
+  ctx.strokeStyle='rgba(255,255,100,0.5)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(mxX,pad.t);ctx.lineTo(mxX,pad.t+ch);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.beginPath();ctx.arc(mxX,mxY,6,0,Math.PI*2);
+  ctx.fillStyle='#fbbf24';ctx.fill();
+  ctx.fillStyle='#fbbf24';ctx.font='bold 11px Inter';ctx.textAlign='left';
+  ctx.fillText('MAX-Q',mxX+8,mxY-4);
+
+  // Update result boxes
+  document.getElementById('maxq-val').textContent=Math.round(maxQPt.q).toLocaleString('es-ES');
+  document.getElementById('maxq-alt').textContent=(maxQPt.h/1000).toFixed(1);
+  document.getElementById('maxq-time').textContent=maxQPt.t.toFixed(0);
+
+  // Legend
+  ctx.fillStyle='#f43f5e';ctx.font='11px Inter';ctx.textAlign='left';ctx.fillText('q(t) presión dinámica',pad.l+8,pad.t+14);
+  ctx.fillStyle='rgba(59,130,246,0.7)';ctx.fillText('Altitud',pad.l+8,pad.t+28);
+}
+// Draw after layout
+setTimeout(drawMaxQ, 100);
+window.addEventListener('resize', ()=>{
+  drawCdChart(); drawISAProfiles(); drawGravCanvas(); drawEulerCanvas(
+    +document.getElementById('s7-step').value,
+    eulerSolve(+document.getElementById('s7-step').value, 10),10
+  ); drawRK4Canvas(
+    +document.getElementById('s8-step').value,
+    eulerSolve(+document.getElementById('s8-step').value,10),
+    rk4Solve(+document.getElementById('s8-step').value,10),10
+  ); setTimeout(drawMaxQ,50);
+});
+</script>
+</body>
+</html>
